@@ -14,4 +14,5 @@ then
   python world_champ_2022/manage.py createsuperuser --no-input
 fi
 python world_champ_2022/manage.py collectstatic --no-input
+python world_champ_2022/manage.py makemigrations
 python world_champ_2022/manage.py migrate
