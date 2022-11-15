@@ -51,7 +51,7 @@ def gambling_list(request):
 	matches = Match.objects.all().order_by("time")
 
 	anchor = ''
-	now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+	now = localtime(timezone.now())
 
 	error=''
 
@@ -96,20 +96,7 @@ def gambling_list(request):
 		except:
 			match_info_guess['guess'] = None
 
-		#print now
-		#print u"Матч:"
-		#print match.time
-
 		mt = match.time
-		# mt.replace(tzinfo=timezone.get_default_timezone())
-		# mt.replace(tzinfo=pytz.timezone(timezone)).astimezone(pytz.timezone(settings.TIME_ZONE))
-		# mt.replace(tzinfo=timezone.get_default_timezone()).astimezone(pytz.timezone(TIME_ZONE))
-		print(match.time)
-		print(localtime(mt))
-		print(datetime.datetime.now())
-		print(now)
-		print(localtime(timezone.now()))
-		print(localtime(now))
 		match_info_guess['enabled'] = (localtime(mt) > now)
 
 		if (match.stage == Match.MATCH_CLASS_GROUP):

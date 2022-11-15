@@ -1,0 +1,25 @@
+{% extends "layout_unauth.html" %}
+{% load static from staticfiles %}
+
+{% block title %}{% block head_title %}{% endblock %}{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+<div>
+<strong>Messages:</strong>
+	<ul>
+	{% for message in messages %}
+	<li>{{message}}</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+{% endblock %}
+{% block extra_body %}
+{% endblock %}
+
+

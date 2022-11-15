@@ -1,14 +1,7 @@
 {% extends "layout_unauth.html" %}
 {% load static %}
+{% block title %}{% block head_title %}{% endblock %}{% endblock %}
 
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{% block head_title %}{% endblock %}</title>
-		{% block extra_head %}
-		{% endblock %}
-	</head>
-	<body>
 		{% block body %}
 
 		{% if messages %}
@@ -27,5 +20,5 @@
 		{% endblock %}
 		{% block extra_body %}
 		{% endblock %}
-	</body>
-</html>
+
+
