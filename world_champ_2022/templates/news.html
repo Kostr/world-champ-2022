@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Последние результаты{% endblock %}
+
+{% block navbar %} {% include "includes/navbar.html" with active_tab='news' %} {% endblock %}
+
+{% block h1 %}<h1>Последние результаты</h1>{% endblock %}
+
+{% block content %}
+
+<div class="row">
+<div class="col">
+<div class="table-responsive">
+	<table class="pure-table pure-table-bordered center_table">
+		<caption>Заработанные очки за последний день</caption>
+		<thead>
+			<tr>
+				<th>Участник</th>
+				<th>Очки до</th>
+				<th>Очки после</th>
+				<th>Заработано</th>
+			</tr>	
+		</thead>
+		<tbody>
+			{% for sc in score_change %}
+			<tr>
+				<td>{{sc.user.first_name}} {{sc.user.last_name}} {% if sc.user.player.money %}<img src="{% static 'coins.png' %}" class="coin_icon"/>{% endif %}</td>
+				<td>{{sc.before}}</td>
+				<td>{{sc.after}}</td>
+				{% if sc.diff %}
+				<td>+{{sc.diff}}</td>
+				{% else %}
+				<td> 0 </td>
+				{% endif %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+<br/>
+<br/>
+
+{% for mgp_data in mgp %}
+<div class="table-responsive">
+	<table class="pure-table pure-table-bordered center_table">
+		<thead>
+			<tr>
+				<th  colspan="3">
+				<center>
+			{% if mgp_data.match.command_1.flag %}
+			<img src="{{mgp_data.match.command_1.flag.url}}">
+			{% endif %}
+			{{mgp_data.match.command_1.name}} - {{mgp_data.match.command_2.name}} 
+			{% if mgp_data.match.command_2.flag %}
+			<img src="{{mgp_data.match.command_2.flag.url}}">
+			{% endif %}	<br/>
+			
+			{% load tz %}
+			{% localtime on %}
+			{{mgp_data.match.time|date:"o-m-d H:i:s"}} <br/>
+			{% endlocaltime %}
+
+			{% if mgp_data.match.score_1 != None %}
+				{% if mgp_data.match.penalty_score_1 != None %}
+					{% if mgp_data.match.extra_score_1 != None %}
+						{{mgp_data.match.score_1}} : {{mgp_data.match.score_2}}, ДВ {{mgp_data.match.extra_score_1}} : {{mgp_data.match.extra_score_2}}, пен. {{mgp_data.match.penalty_score_1}} : {{mgp_data.match.penalty_score_2}}
+					{% else %}
+						{{mgp_data.match.score_1}} : {{mgp_data.match.score_2}}, пен. {{mgp_data.match.penalty_score_1}} : {{mgp_data.match.penalty_score_2}}
+					{% endif %}
+				{% else %}
+					{% if mgp_data.match.extra_score_1 != None %}
+						{{mgp_data.match.score_1}} : {{mgp_data.match.score_2}}, ДВ {{mgp_data.match.extra_score_1}} : {{mgp_data.match.extra_score_2}}
+					{% else %}
+						{{mgp_data.match.score_1}} : {{mgp_data.match.score_2}}
+					{% endif %}
+				{% endif %}
+			{% else %}
+			- : -
+			{% endif %}
+				</center>
+				</th>
+			</tr>
+			<tr>
+				<th>Участник</th>
+				<th>Прогноз</th>
+				<th>Заработанные очки</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for user_guesses in mgp_data.user_guesses %}
+			<tr>
+				<td>{{ user_guesses.user.first_name }} {{ user_guesses.user.last_name }} {% if user_guesses.user.player.money %}<img src="{% static 'coins.png' %}" class="coin_icon"/>{% endif %}</td>
+				{% if user_guesses.guess != None%}
+				<td>{{ user_guesses.guess.guess_score_1 }}:{{ user_guesses.guess.guess_score_2 }}</td>
+				{% else %}
+				<td>отсутствует</td>
+				{% endif %}
+				<td>
+				{% if user_guesses.score %}
+					+{{user_guesses.score}}
+				{% else %}
+					0
+				{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

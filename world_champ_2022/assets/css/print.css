@@ -1,0 +1,67 @@
+@media print {
+
+  @page {                
+    /* size: A4 landscape; */
+	size: A4;
+	margin: 10mm;
+  }
+
+  html, body {
+	 width: 100%;
+  }
+
+  body {
+    margin: 0 auto;
+    line-height: 1em;
+    word-spacing:1px;
+    letter-spacing:0.2px;
+    font: 14px "Times New Roman", Times, serif;
+    background:white;
+    color:black;
+    width: 100%;
+    float: none;
+  }
+
+  /* avoid page-breaks inside a listingContainer*/
+  .listingContainer{
+    page-break-inside: avoid;
+  }
+
+  h1 {
+    font: 28px "Times New Roman", Times, serif;
+  }
+
+  h2 {
+    font: 24px "Times New Roman", Times, serif;
+  }
+
+  h3 {
+    font: 20px "Times New Roman", Times, serif;
+  }
+
+  /* Improve colour contrast of links */
+  a:link, a:visited {
+    color: #781351
+  }
+
+  /* URL */
+  a:link, a:visited {
+    background: transparent;
+    color:#333;
+    text-decoration:none;
+  }
+
+  a[href]:after {
+    content: "" !important;
+  }
+
+  a[href^="http://"] {
+    color:#000;
+  }
+
+  #header {
+    height:75px;
+    font-size: 24pt;
+    color:black
+  }
+}

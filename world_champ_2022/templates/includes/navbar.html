@@ -1,0 +1,67 @@
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-static-top ">
+	<div class="container">
+		<div class="navbar-header">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mynavbar" aria-controls="mynavbar" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+		<div id="mynavbar" class="navbar-collapse collapse">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item {% if active_tab == 'home' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'home' %}">
+					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+					Home</a>
+				</li>
+				<li class="nav-item {% if active_tab == 'gambling' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'gambling:list' %}">
+					<!-- <i class="fa fa-database" aria-hidden="true"></i> -->
+					<!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
+					<i class="fa fa-user" aria-hidden="true"></i>
+					Мои ставки</a>
+				</li>
+				<li class="nav-item {% if active_tab == 'results' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'results' %}">
+					<!-- <i class="fa fa-ambulance" aria-hidden="true"></i> -->
+					<i class="fa fa-line-chart" aria-hidden="true"></i>
+					График состязания</a>
+				</li>
+				<li class="nav-item {% if active_tab == 'news' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'news' %}">
+					<i class="fa fa-newspaper-o" aria-hidden="true"></i>
+					Последние результаты</a>
+				</li>
+				<li class="nav-item {% if active_tab == 'stats' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'stats' %}">
+					<!-- <i class="fa fa-book" aria-hidden="true"></i> -->
+					<i class="fa fa-bar-chart" aria-hidden="true"></i>
+					Статистика прогнозов</a>
+				</li>
+				<li class="nav-item {% if active_tab == 'tournament' %}active{% endif %}">
+					<a class="nav-link" href="{% url 'tournament' %}">
+					<i class="fa fa-futbol-o" aria-hidden="true"></i>
+					Чемпионат</a>
+				</li>
+				<!--
+				<li>
+					<a href="{% url 'updates' %}">
+					<i class="fa fa-bar-chart" aria-hidden="true"></i>
+					Обновления сайта</a>
+				</li>
+				-->
+			</ul>
+				<ul class="nav navbar-nav navbar-right">
+				<li class="nav-item">
+					{% if user.is_authenticated %}
+					<a class="nav-link" href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout ({{ user.username }})</a>
+					{% else %}
+					<a class="nav-link" href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+					{% endif %}
+				</li>
+			</ul>
+	<!-- <div id="nav"> -->
+	<!-- </div> -->
+		</div>
+	</div>
+</nav>
+<!-- NAVBAR -->

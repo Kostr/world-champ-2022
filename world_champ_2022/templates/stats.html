@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Статистика прогнозов{% endblock %}
+
+{% block navbar %} {% include "includes/navbar.html" with active_tab='stats' %} {% endblock %}
+
+{% block h1 %}<h1>Статистика</h1>{% endblock %}
+
+{% block content %}
+
+<script src="{% static 'js/Highcharts-7.2.0/code/highcharts.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/Highcharts-7.2.0/code/modules/exporting.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/Highcharts-7.2.0/code/modules/data.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/Highcharts-7.2.0/code/modules/drilldown.js' %}" type="text/javascript"></script>
+
+<script>
+	$(function () {
+		$('#container').highcharts({
+			chart: {
+				type: 'column'
+			},
+
+			title: {
+				text: 'Статистика прогнозов'
+			},
+
+			xAxis: {
+				categories: [
+				{% for us in us_list %}
+				'{{us.user.first_name}} {{us.user.last_name}} {% if us.user.player.money %}<img src="{% static "coins.png" %}" class="coin_icon"/>{% endif %}', 
+				{% endfor %}
+				],
+				labels: {
+					useHTML:true,
+				}
+			},
+
+			yAxis: {
+				allowDecimals: false,
+				min: 0,
+				tickInterval: 1,
+				title: {
+					text: 'Количество матчей'
+				},
+				/*
+				stackLabels: {
+					enabled: true,
+					style: {
+						fontWeight: 'bold',
+						color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+					}
+				} 
+				*/
+			},
+
+			tooltip: {
+				useHTML: true,
+				formatter: function () {
+					if  (this.series.options.stack == 'win') {
+						return '<b>' + this.x + '</b><br/>' +
+							this.series.name + ': ' + this.y + '<br/>' +
+							'Всего угадано матчей: ' + this.point.stackTotal;
+					} else {
+						return '<b>' + this.x + '</b><br/>' +
+							this.series.name + ': ' + this.y + '<br/>' +
+							'Всего не угадано матчей: ' + this.point.stackTotal;
+					}
+				}
+			},
+
+			plotOptions: {
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: true,
+						color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+						style: {
+							textShadow: '0 0 3px black'
+						},
+						
+						formatter: function () {
+							if (this.y)
+								return this.y;
+							else
+								return ''
+						}
+					}
+				}
+			},
+
+			series: [{
+				name: 'Угадан только победитель',
+				data: [
+				{% for us in us_list %}
+					{{us.winner}},
+				{% endfor %}
+				],
+				stack: 'win'
+			}, {
+				name: 'Угадан только победитель и разница',
+				data: [
+				{% for us in us_list %}
+					{{us.difference}},
+				{% endfor %}
+				],
+				stack: 'win'
+			}, {
+				name: 'Угадан точный счёт',
+				data: [
+				{% for us in us_list %}
+					{{us.correct}},
+				{% endfor %}
+				],
+				stack: 'win'
+			}, {
+				name: 'Победитель не угадан',
+				data: [
+				{% for us in us_list %}
+					{{us.incorrect}},
+				{% endfor %}
+				],
+				stack: 'loose'
+			}, {
+				name: 'Ставка не сделана',
+				data: [
+				{% for us in us_list %}
+					{{us.missed}},
+				{% endfor %}
+				],
+				stack: 'loose'
+			}, 
+			]
+		});
+	});
+</script>
+
+<br/>
+<br/>
+<div id="container" style="height: 600px; margin: 0 auto"></div>
+<br/>
+<br/>
+{% endblock %}

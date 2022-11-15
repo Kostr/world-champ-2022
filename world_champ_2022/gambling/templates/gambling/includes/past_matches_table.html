@@ -1,0 +1,122 @@
+<div class="table-responsive">
+	<table class="pure-table pure-table-bordered center_table" >
+		<caption>Таблица ваших прогнозов</caption>
+
+		<thead>
+			<tr>
+				<th>Этап</th>
+				<th>Матч</th>
+				<th>Время матча</th>
+				<th>Прогноз</th>
+				<th>Результат матча</th>
+				<th>Заработанные очки</th>
+			</tr>
+		</thead>
+
+		<tbody>
+		{% for mig in past_match_info_guesses %}
+		<tr>
+			<!-- 	<fieldset class="fieldset-auto-width"> -->
+			<td>{{mig.stage}}</td>
+			<td id="mg_{{mig.match.id}}">
+			{% if mig.match.command_1.flag %}
+				<img src="{{mig.match.command_1.flag.url}}"> 
+			{% endif %}
+
+			{{mig.match.command_1.name}} - {{mig.match.command_2.name}} 
+
+			{% if mig.match.command_2.flag %} 
+				<img src="{{mig.match.command_2.flag.url}}"> 
+			{% endif %}<br/><br/>
+
+			</td>
+
+			<td>
+			{{mig.match.time|date:"o-m-d"}} <br/> {{mig.match.time|date:"(l)"}} <br/> {{mig.match.time|date:"H:i:s"}} <br/>
+			</td>
+
+			<td>
+				<form action="" method="post">
+					{% csrf_token %}
+					<select name="result1" required {% if not mig.enabled %}disabled{% endif %}>
+						{% if mig.guess %}
+						<option value=""></option>
+							{% for score_choise in score_choices %}
+								{% if mig.guess.guess_score_1 == score_choise %}
+									<option value="{{score_choise}}" selected>{{score_choise}}</option>
+								{% else %}
+									<option value="{{score_choise}}">{{score_choise}}</option>
+								{% endif%}
+							{% endfor %}
+						{% else %}
+							<option value=""></option>
+							{% for score_choise in score_choices %}
+							<option value="{{score_choise}}">{{score_choise}}</option>
+							{% endfor %}
+						{% endif %}
+					</select>
+					:
+					<select name="result2" required {% if not mig.enabled %}disabled{% endif %}>
+						{% if mig.guess %}
+						<option value=""></option>
+							{% for score_choise in score_choices %}
+
+							{% if mig.guess.guess_score_2 == score_choise %}
+							<option value="{{score_choise}}" selected>{{score_choise}}</option>
+							{% else %}
+							<option value="{{score_choise}}">{{score_choise}}</option>
+							{% endif%}
+							
+							{% endfor %}
+						{% else %}
+							<option value=""></option>
+							{% for score_choise in score_choices %}
+							<option value="{{score_choise}}">{{score_choise}}</option>
+							{% endfor %}
+						{% endif %}
+					</select>
+
+					<br/><br/>
+					{% if mig.enabled %}
+						{% if mig.guess %}
+					<input type="submit" name="action_{{mig.match.id}}" value="Изменить"/>
+						{% else %}
+					<input type="submit" name="action_{{mig.match.id}}" value="Добавить"/>
+						{% endif %}
+					{% endif %}
+				</form>
+			<!-- 	</fieldset> -->
+			</td>
+			<td>
+			<!-- Результат матча -->
+				{% if mig.match.score_1 != None %}
+					{% if mig.match.penalty_score_1 != None %}
+						{% if mig.match.extra_score_1 != None %}
+							{{mig.match.score_1}} : {{mig.match.score_2}}, ДВ {{mig.match.extra_score_1}} : {{mig.match.extra_score_2}}, пен. {{mig.match.penalty_score_1}} : {{mig.match.penalty_score_2}}
+						{% else %}
+							{{mig.match.score_1}} : {{mig.match.score_2}}, пен. {{mig.match.penalty_score_1}} : {{mig.match.penalty_score_2}}
+						{% endif %}
+					{% else %}
+						{% if mig.match.extra_score_1 != None %}
+							{{mig.match.score_1}} : {{mig.match.score_2}}, ДВ {{mig.match.extra_score_1}} : {{mig.match.extra_score_2}}
+						{% else %}
+							{{mig.match.score_1}} : {{mig.match.score_2}}
+						{% endif %}
+					{% endif %}
+				{% else %}
+				- : -
+				{% endif %}
+			</td>
+			<td>
+			<!-- Заработанные очки-->
+			{% if mig.plus_score %}
+				+{{mig.plus_score}}
+			{% else %}
+				0
+			{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>

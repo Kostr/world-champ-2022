@@ -1,0 +1,363 @@
+{% extends "layout.html" %}
+
+{% block title %}Чемпионат{% endblock %}
+
+{% block navbar %} {% include "includes/navbar.html" with active_tab='tournament' %} {% endblock %}
+
+{% block h1 %}<h1>Чемпионат</h1>{% endblock %}
+
+{% block content %}
+ 
+<style>
+.scale
+{
+	height: 1em; 
+	width: 1em;
+}
+</style>
+
+<h2>Групповой этап</h2>
+
+{% for group_table in group_tables %}
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа {{group_table.group_name}}</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for e in group_table.commands_list %}
+			<tr>
+				<td>{{ forloop.counter }}</td>
+				<td><img src="{{e.command.flag.url}}" class="scale"> {{e.command.name}}</td>
+				<td>{{e.matches_played}}</td>
+				<td>{{e.score}}</td>
+				<td>{{e.win}}</td>
+				<td>{{e.draw}}</td>
+				<td>{{e.loose}}</td>
+				{% if e.goal_difference > 0 %}
+				<td>+{{e.goal_difference}}</td>
+				{% else %}
+				<td>{{e.goal_difference}}</td>
+				{% endif %}
+				<td>{{e.goals}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<br/>
+</div>
+{% endfor %}
+<br/>
+<br/>
+
+<h2>Плей-офф</h2>
+<div id="viz_area">
+</div>
+
+<br/>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<script>
+// Select the svg area
+var svg = d3.select("#viz_area").append("svg")
+.attr("preserveAspectRatio", "xMinYMin meet")
+.attr("viewBox", "0 0 1200 800")
+// Create a scale: transform value in pixel
+var x = d3.scaleLinear()
+    .domain([0, 100])         // This is the min and the max of the data: 0 to 100 if percentages
+    .range([0, 1100]);       // This is the corresponding value I want in Pixel
+
+var y = d3.scaleLinear()
+    .domain([0, 100])         // This is the min and the max of the data: 0 to 100 if percentages
+    .range([0, 700]);       // This is the corresponding value I want in Pixel
+// Try console.log( x(25) ) to see what this x function does.
+
+
+// Add 3 dots for 0, 50 and 100%
+/*
+svg.append('rect')
+  .attr("x", x(0))
+  .attr("y", y(10))
+  .attr("width", x(100))
+  .attr("height", y(80))
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "2")
+*/
+
+var innerSpace = svg.append("g")
+    .attr("transform", "translate(" + 50 + "," + 50 + ")")
+	.attr("class", "hhh")
+
+//innerSpace.call(d3.axisBottom(x));
+//innerSpace.append('g').call(d3.axisLeft(y));
+
+
+
+
+
+var commands=16;
+// 16*rect_y+8*space_small+7*space_large = 100
+// 16*8x + 8*1x + 7*3x = 100
+//var yyy = 100./(16*8+8*1+7*4)
+var yyy = 100./(16*8+7*4)
+var xxx = 100./(4*16+4*3+3*7)
+
+var RECT_Y_SIZE = yyy*8;
+var SPACE_BETWEEN_LONG=yyy*4
+
+var RECT_X_SIZE = xxx*16;
+var RECT_SCORE_X_SIZE = xxx*3;
+var X_BETWEEN_ROUND_SIZE = xxx*7;
+
+
+space=0
+
+var round1_data = [{'name':'A1', 'score':'', 'class': ''},
+			{'name':'B2', 'score':'', 'class': ''},
+			{'name':'C1', 'score':'', 'class': ''},
+			{'name':'D2', 'score':'', 'class': ''},
+			{'name':'E1', 'score':'', 'class': ''},
+			{'name':'F2', 'score':'', 'class': ''},
+			{'name':'G1', 'score':'', 'class': ''},
+			{'name':'H2', 'score':'', 'class': ''},
+			{'name':'B1', 'score':'', 'class': ''},
+			{'name':'A2', 'score':'', 'class': ''},
+			{'name':'D1', 'score':'', 'class': ''},
+			{'name':'C2', 'score':'', 'class': ''},
+			{'name':'F1', 'score':'', 'class': ''},
+			{'name':'E2', 'score':'', 'class': ''},
+			{'name':'H1', 'score':'', 'class': ''},
+			{'name':'G2', 'score':'', 'class': ''}]
+
+var round2_data = [{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''}]
+
+var round3_data = [{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''}]
+
+var round4_data = [{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''}]
+
+function y_height(n, round_number) {
+	var space = 0;
+
+	var height = 0;
+	if (round_number==2)
+		height = 2*RECT_Y_SIZE+  SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==3)
+		height = 4*RECT_Y_SIZE+2*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==4)
+		height = 8*RECT_Y_SIZE+4*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+
+	var space_long = SPACE_BETWEEN_LONG
+	if (round_number==2)
+		space_long = RECT_Y_SIZE*4 +SPACE_BETWEEN_LONG*2 - 2*(RECT_Y_SIZE)
+	if (round_number==3)
+		space_long = RECT_Y_SIZE*8 +SPACE_BETWEEN_LONG*4 - 2*(RECT_Y_SIZE)
+	if (round_number==4)
+		space_long = RECT_Y_SIZE*16+SPACE_BETWEEN_LONG*8 - 2*(RECT_Y_SIZE)
+
+	for (var i=0; i<n; i++) {
+		height+=RECT_Y_SIZE;
+		if (i%2)
+			height += space_long;
+	}
+	return height;
+}
+
+drawRound(round1_data, 1)
+drawRound(round2_data, 2)
+drawRound(round3_data, 3)
+drawRound(round4_data, 4)
+
+function drawRound(round_data, round_number) {
+	command=innerSpace.selectAll("whatever")
+	  .data(round_data)
+	  .enter()
+	  .append("g")
+		.attr("transform", function(d, i) {
+			return "translate(" + x((round_number-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," + 
+								   y(y_height(i, round_number)) + ")";
+		});
+		
+	command.append("path")
+		.attr("d", function (d, i) {
+			if (i%2==0) {
+				return "M " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE/2) + " " + y(0) + " " +
+		           "Q " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + ", "+ y(0) + " " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + "," + y(RECT_Y_SIZE)/2 + " " +
+				   "V " + y(RECT_Y_SIZE) + " " +
+				   "H " + x(0) + " " +
+				   "V " + y(RECT_Y_SIZE)/2 + " " +
+				   "Q " + x(0) + ", " + y(0) + " " + x(RECT_SCORE_X_SIZE/2) + "," + y(0) + " " +
+				   "z"
+			}
+			else {
+				return  "M " + x(0) + " " +  y(0) + " " +
+				   "H " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + " " +
+		           "V " + y(RECT_Y_SIZE)/2 + " " +
+				   "Q " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + "," + y(RECT_Y_SIZE) + " " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE/2) + "," + y(RECT_Y_SIZE) + " " +
+				   "H " + x(RECT_SCORE_X_SIZE/2) + " " +
+				   "Q " + x(0) + "," + y(RECT_Y_SIZE) + " " + x(0) + "," + y(RECT_Y_SIZE)/2 + " " +
+				   "V " + y(0)}
+				})
+		  .attr("class", function(d, i) { return d.class})
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3")
+		  .style("fill", "white")
+
+//	command.append("rect")
+//		  //.attr("rx", x(1))
+//		  //.attr("ry", y(1))
+//		  .attr("width", x(RECT_X_SIZE+RECT_SCORE_X_SIZE))
+//		  .attr("height", y(RECT_Y_SIZE))
+//		  .style("fill", "white").style("stroke", "black")
+//		  .attr("class", function(d, i) { return d.class})
+
+	command.append("line")
+		  .attr("x1", x(RECT_X_SIZE))
+		  .attr("x2", x(RECT_X_SIZE))
+		  .attr("y1", y(0))
+		  .attr("y2", y(RECT_Y_SIZE))
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3")
+		  .attr("class", function(d, i) { return d.class})
+
+	command.append("text")
+		  .attr("x", x(1))
+		  .attr("y", y(RECT_Y_SIZE/2))
+		  .attr("dy", "0.35em")				//vertical alignment
+		  .style("font-size", "15px")
+		  .attr("text-anchor", "start")
+		  .style("stroke", "black")
+		  .text(function(d) { return d.name; })
+		  .attr("class", function(d, i) { return d.class})
+
+	command.append("text")
+		  .attr("x", x(RECT_X_SIZE + RECT_SCORE_X_SIZE/2))
+		  .attr("y", y(RECT_Y_SIZE / 2))
+		  .attr("dy", "0.35em")			//vertical alignment
+		  .style("font-size", "15px")
+		  .attr("text-anchor", "middle")
+		  .style("stroke", "black")
+		  .text(function(d) { return d.score; })
+		  .attr("class", function(d, i) { return d.class})
+
+	if (round_number!=1) {
+		command.append("line")
+			  .attr("x1", x(0))
+			  .attr("x2", function(d, i) {
+				if (i%2==0) 
+					return -x(X_BETWEEN_ROUND_SIZE/2)
+				else
+					return x(0)
+			})
+			  .attr("y1", y(RECT_Y_SIZE))
+			  .attr("y2", y(RECT_Y_SIZE))
+			  .style("fill", "white")
+			  .style("stroke", "grey")
+			  .attr("stroke-width", "3");
+	}
+
+	if (round_number!=4) {
+	/*
+		command.append("path")
+			.attr("d", function (d, i) {
+				if (i%2==0) {
+					if (i==0)
+						return "M " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE) + " " + y(RECT_Y_SIZE) + " " +
+						       "Q " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + "," + y(RECT_Y_SIZE) + " " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + "," + (y(RECT_Y_SIZE) + x(X_BETWEEN_ROUND_SIZE/2)) + " "
+					return "M " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE) + " " + y(RECT_Y_SIZE) + " " +
+					       "H " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + " "
+				}
+			})
+			.style("fill", "white")
+			.style("stroke", "grey")
+			.attr("stroke-width", "3");
+	*/
+	
+	
+
+		command.append("line")
+			  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE))
+			  .attr("x2", function(d, i) {
+				if (i%2==0) 
+					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)+x(X_BETWEEN_ROUND_SIZE/2)
+				else
+					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)
+			  })
+			  .attr("y1", y(RECT_Y_SIZE))
+			  .attr("y2", y(RECT_Y_SIZE))
+			  .style("fill", "white")
+			  .style("stroke", "grey")
+			  .attr("stroke-width", "3");
+	}
+}
+
+innerSpace.append("line")
+		  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(RECT_X_SIZE + RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE))
+		  .attr("y2", y(100-RECT_Y_SIZE))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+innerSpace.append("line")
+		  .attr("x1", x(2*RECT_X_SIZE + 2*RECT_SCORE_X_SIZE +X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(2*RECT_X_SIZE + 2*RECT_SCORE_X_SIZE +X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE*2 + SPACE_BETWEEN_LONG/2))
+		  .attr("y2", y(100-(RECT_Y_SIZE*2 + SPACE_BETWEEN_LONG/2)))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+innerSpace.append("line")
+		  .attr("x1", x(3*RECT_X_SIZE + 3*RECT_SCORE_X_SIZE + 2*X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(3*RECT_X_SIZE + 3*RECT_SCORE_X_SIZE + 2*X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE*4 + SPACE_BETWEEN_LONG + SPACE_BETWEEN_LONG/2))
+		  .attr("y2", y(100-(RECT_Y_SIZE*4 + SPACE_BETWEEN_LONG + SPACE_BETWEEN_LONG/2)))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+
+round1_data.forEach( function(e) {
+		$('.' + e.class).on( "mouseenter", function() {
+			$('.' + e.class).css({ fill: "#00ff00" });
+			}
+		);
+		$('.' + e.class).on( "mouseleave", function() {
+			$('.' + e.class).css({ fill: "#ffffff" });
+			}
+		);
+	}
+)
+//$('.Russia').css({ fill: "#ff0000" });
+</script>
+
+{% endblock %}

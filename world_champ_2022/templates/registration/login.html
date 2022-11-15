@@ -1,0 +1,195 @@
+{% load static %}
+{% load socialaccount %}
+<!doctype html>
+<html lang="en" ng-app="worldchampApp">
+	<head>
+		<meta charset="utf=8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<title>{% block title %}{% endblock %}</title>
+		<!-- <link rel="stylesheet" href="{% static 'css/layout.css' %}"> -->
+		<link rel="stylesheet" href="{% static 'css/pure-min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}">
+		<link rel="stylesheet" type="text/css" media="print" href="{% static 'css/print.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'euro2020.ico' %}">
+		<link rel="stylesheet" href="{% static 'css/mystyles_worldchamp_14_06_2018.css' %}">
+		<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+		<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}">
+		<!-- <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"> -->
+		<script src="{% static 'js/jquery-3.1.0.min.js' %}" type="text/javascript"></script>
+		<script src="{% static 'js/jQuery.print.js' %}" type="text/javascript"></script>
+		<script src="{% static 'js/angular.min.js' %}"></script>
+		<style type="text/css">
+			.fieldset-auto-width {
+				 display: inline-block;
+			}
+		</style>
+		<style type="text/css">
+			form {
+				width: 100%;
+				margin: 0 auto;
+				float: left;
+			}
+
+			label, input {
+				/* in order to define widths */
+				display: inline-block;
+			}
+
+			label {
+				width: 30%;
+				/* positions the label text beside the input */
+				text-align: right;
+			}
+
+			label + input {
+				width: 30%;
+				/* large margin-right to force the next element to the new-line
+				   and margin-left to create a gutter between the label and input */
+				margin: 0 20% 0 4%;
+			}
+
+		</style>
+		
+		<style>
+		  @font-face {
+			font-family: 'Kurale-Regular';
+			src: url('{% static 'fonts/Kurale-Regular.ttf' %}');
+			src: local('{% static 'fonts/Kurale-Regular.ttf' %}');
+		  }
+		  
+		  h1 {
+				font-family: 'Kurale-Regular'
+			  }
+			  
+		  body {
+				background-image: url('{% static 'body_background.jpg' %}');
+				background-color: #fff;
+				background-repeat: repeat-x;
+				background-position: center 0px;
+				background-attachment: fixed;
+				/* background-size: cover; */
+				background-size: auto 100vh; 
+		  }
+		</style>
+	</head>
+	<body>
+	<div class="site-container">
+		<div class="container">
+			<div class="jumbotron">
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12">
+						<h1>Для входа в систему введите имя пользователя и пароль:</h2>
+						<br/>
+						{% if form.errors %}
+							<p>Неправильные имя пользователя или пароль. Попробуйте снова.</p>
+						{% endif %}
+
+						<div class="login_form">
+							<form method="post" action="{% url 'login' %}?next={{next | urlencode}}" class="form-horizontal">
+								
+								{% csrf_token %}
+								<div class="row row-content">
+									<div class="col-xs-12  col-sm-12">
+										<div class="form-group">
+										<label for="id_username" class="control-label">Имя пользователя:</label>
+											{{ form.username }}
+										</div>
+									</div>
+
+									<div class="col-xs-12  col-sm-12">
+										<div class="form-group">
+										<label for="id_password" class="control-label">Пароль:</label>
+											{{ form.password }}
+										</div>
+									</div>
+
+								</div>
+								
+								
+									<div class="col-xs-12  col-sm-12">
+										
+									</div>
+
+									<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+										<div class="form-group">
+										<button  type="submit" id="submit_btn" class="btn btn-primary">Вход <span class="glyphicon glyphicon-log-in"></span></button>
+										<input type="hidden" name="next" value="{{next}}" />
+										</div>
+									</div>
+									<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+										<a href="{% url 'password_reset' %}">Забыли пароль?</a>
+									</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<hr class="my-4">
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+				Не зарегистрированы?  
+					</div>
+				</div>
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+					<a href="/accounts/signup" class="mysocial btn btn-primary" role="button">Зарегистрироваться</a>
+					</div>
+				</div>
+				<hr class="my-4">
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						Также доступна авторизация через социальные сети:
+					</div>
+				</div>
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						<a href="{% provider_login_url "vk" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-facebook" role="button"><span class="fa fa-vk"></span>Войти через VK</a>
+					</div>
+				</div>
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						<a href="{% provider_login_url "google" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-google" role="button"><span class="fa fa-google"></span>Войти через Google</a>
+					</div>
+				</div>
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						<a href="{% provider_login_url "telegram" %}" class="mysocial btn btn-default btn-lg btn-social btn-telegram" role="button"><span class="fa fa-telegram"></span>Войти через Telegram</a>
+					</div>
+				</div>
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						<a href="{% provider_login_url "instagram" %}" class="mysocial btn btn-default btn-lg btn-social btn-instagram" role="button"><span class="fa fa-instagram"></span>Войти через instagram</a>
+					</div>
+				</div>
+
+				<div class="row row-content">
+					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+						<a href="{% provider_login_url "facebook" %}" class="mysocial btn btn-default btn-lg btn-social btn-facebook" role="button"><span class="fa fa-facebook"></span>Войти через facebook</a>
+					</div>
+				</div>
+				
+<script async src="https://telegram.org/js/telegram-widget.js?15" data-telegram-login="samplebot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+<script type="text/javascript">
+  function onTelegramAuth(user) {
+    alert('Logged in as ' + user.first_name + ' ' + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+  }
+</script>
+			</div><!-- jumbotron -->
+		</div>
+	</div>
+	<footer class="container-fluid text-center">
+		2022
+	</footer>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script> var app=angular.module('worldchampApp',[]);</script>
+	</body>
+</html>
