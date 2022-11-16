@@ -39,7 +39,7 @@ urlpatterns = [
     #    auth_views.password_reset_confirm, name='password_reset_confirm'),
     #re_path(r'^password-reset/complete/$', auth_views.password_reset_complete ,name='password_reset_complete'),
     re_path(r'^$', views.start_page, name='home'),
-    re_path(r'^accounts/', include('allauth.urls')),
+    #re_path(r'^accounts/', include('allauth.urls')),
     re_path(r'^', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]
