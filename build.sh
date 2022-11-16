@@ -19,6 +19,6 @@ fi
 #python world_champ_2022/manage.py migrate --run-syncdb
 #python custom_sql.py
 python world_champ_2022/manage.py showmigrations
-python world_champ_2022/manage.py dbshell -- -c 'DELETE FROM django_migrations WHERE app = socialaccount'
-python world_champ_2022/manage.py dbshell -- -c 'DELETE FROM django_migrations WHERE app = sites'
+python world_champ_2022/manage.py dbshell -- -c "DELETE FROM django_migrations WHERE app='socialaccount'"
+python world_champ_2022/manage.py dbshell -- -c "DELETE FROM django_migrations WHERE app='sites'"
 #python custom_sql.py
