@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_UNIQUE_EMAIL = True
