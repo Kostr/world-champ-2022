@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 #    'allauth.socialaccount.providers.instagram',
 #    'allauth.socialaccount.providers.facebook',
 #    'allauth.socialaccount.providers.github',
-#    'django.contrib.sites',
+    'django.contrib.sites',
 ]
 
 SITE_ID = 1
