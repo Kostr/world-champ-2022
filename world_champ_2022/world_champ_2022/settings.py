@@ -52,10 +52,10 @@ INSTALLED_APPS = [
 #    'allauth.socialaccount.providers.instagram',
 #    'allauth.socialaccount.providers.facebook',
 #    'allauth.socialaccount.providers.github',
-#    'django.contrib.sites',
+    'django.contrib.sites',
 ]
 
-SITE_ID = 2
+SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_UNIQUE_EMAIL = True
