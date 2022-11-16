@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 #    'allauth',
 #    'allauth.account',
 #    'allauth.socialaccount',
@@ -52,7 +53,6 @@ INSTALLED_APPS = [
 #    'allauth.socialaccount.providers.instagram',
 #    'allauth.socialaccount.providers.facebook',
 #    'allauth.socialaccount.providers.github',
-    'django.contrib.sites',
 ]
 
 SITE_ID = 1
@@ -128,10 +128,10 @@ WSGI_APPLICATION = 'world_champ_2022.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/world_champ_2022',        conn_max_age=600),
+    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/world_champ_2022', conn_max_age=600),
 #    'default': {
 #       'ENGINE': 'django.db.backends.sqlite3',
-#       'NAME': BASE_DIR / 'db.sqlite3',
+#       'NAME': str(BASE_DIR / 'db.sqlite3'),
 #   }
 }
 
