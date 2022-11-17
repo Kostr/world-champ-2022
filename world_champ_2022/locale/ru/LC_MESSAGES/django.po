@@ -118,10 +118,9 @@ msgid "This e-mail address is already associated with another account."
 msgstr "Указанный e-mail прикреплен к другому пользователю."
 
 #: account/forms.py:456
-#, fuzzy, python-format
-#| msgid "Your account has no verified e-mail address."
+#, python-format
 msgid "You cannot add more than %d e-mail addresses."
-msgstr "Нет подтвержденных e-mail адресов для вашего аккаунта."
+msgstr "Вы не можете добавить более %d e-mail адресов"
 
 #: account/forms.py:481
 msgid "Current Password"
@@ -397,14 +396,9 @@ msgid "Do you really want to remove the selected e-mail address?"
 msgstr "Вы действительно хотите удалить этот e-mail адрес?"
 
 #: templates/account/email/base_message.txt:1
-#, fuzzy, python-format
-#| msgid ""
-#| "Thank you from %(site_name)s!\n"
-#| "%(site_domain)s"
+#, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
-"Спасибо от сайта «%(site_name)s!»\n"
-"%(site_domain)s"
+msgstr "Вас приветствует %(site_name)s!"
 
 #: templates/account/email/base_message.txt:5
 #, python-format
@@ -416,48 +410,29 @@ msgstr ""
 "%(site_domain)s"
 
 #: templates/account/email/email_confirmation_message.txt:5
-#, fuzzy, python-format
-#| msgid ""
-#| "Hello from %(site_name)s!\n"
-#| "\n"
-#| "You're receiving this e-mail because user %(user_display)s has given "
-#| "yours as an e-mail address to connect their account.\n"
-#| "\n"
-#| "To confirm this is correct, go to %(activate_url)s\n"
+#, python-format
 msgid ""
 "You're receiving this e-mail because user %(user_display)s has given your e-"
 "mail address to register an account on %(site_domain)s.\n"
 "\n"
 "To confirm this is correct, go to %(activate_url)s"
 msgstr ""
-"Вас приветствует %(site_name)s!\n"
-"\n"
 "Вы получили это письмо, потому что пользователь %(user_display)s указал ваш "
-"e-mail для подключения к своему аккаунту.\n"
+"e-mail для подключения к своему аккаунту на %(site_domain)s.\n"
 "\n"
-"Чтобы подтвердить, перейдите по ссылке %(activate_url)s\n"
+"Чтобы подтвердить, перейдите по ссылке %(activate_url)s"
 
 #: templates/account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr "Пожалуйста подтвердите ваш e-mail адрес"
 
 #: templates/account/email/password_reset_key_message.txt:4
-#, fuzzy
-#| msgid ""
-#| "Hello from %(site_name)s!\n"
-#| "\n"
-#| "You're receiving this e-mail because you or someone else has requested a "
-#| "password for your user account.\n"
-#| "It can be safely ignored if you did not request a password reset. Click "
-#| "the link below to reset your password."
 msgid ""
 "You're receiving this e-mail because you or someone else has requested a "
 "password for your user account.\n"
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
-"Вас приветствует %(site_name)s!\n"
-"\n"
 "Вы получили это письмо потому, что вы или кто-то иной запросили смену пароля "
 "для своего аккаунта.\n"
 "Если это были не вы, просто проигнорируйте это письмо. Иначе перейдите по "
@@ -492,10 +467,10 @@ msgid ""
 "\n"
 "If it was you, you can sign up for an account using the link below."
 msgstr ""
-"Вас приветствует %(site_name)s!\n"
-"\n"
-"Вы получили это письмо потому, что вы или кто-то иной запросили смену пароля "
-"для своего аккаунта.\n"
+"Вы получили это письмо потому, что вы или кто-то иной запросили\n"
+"смену пароля для своего аккаунта. Однако у нас нет какой-либо записи о "
+"пользователе\n"
+"c таким email %(email)s в нашей базе данных.\n"
 "Если это были не вы, просто проигнорируйте это письмо. Иначе перейдите по "
 "ссылке для смены пароля."
 
@@ -649,11 +624,6 @@ msgid "Please contact us if you have any trouble resetting your password."
 msgstr "Свяжитесь с нами, если у вас возникли сложности со сменой пароля."
 
 #: templates/account/password_reset_done.html:15
-#, fuzzy
-#| msgid ""
-#| "We have sent an e-mail to you for\n"
-#| "verification. Please click on the link inside this e-mail. Please\n"
-#| "contact us if you do not receive it within a few minutes."
 msgid ""
 "We have sent you an e-mail. If you have not received it please check your "
 "spam folder. Otherwise contact us if you do not receive it in a few minutes."
@@ -749,11 +719,6 @@ msgid ""
 msgstr "Эта часть сайта требует подтверждения e-mail адреса."
 
 #: templates/account/verified_email_required.html:16
-#, fuzzy
-#| msgid ""
-#| "We have sent an e-mail to you for\n"
-#| "verification. Please click on the link inside this e-mail. Please\n"
-#| "contact us if you do not receive it within a few minutes."
 msgid ""
 "We have sent an e-mail to you for\n"
 "verification. Please click on the link inside that e-mail. If you do not see "
