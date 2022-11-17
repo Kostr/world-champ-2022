@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
@@ -22,7 +23,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
     re_path(r'^gambling/', include('gambling.urls', namespace='gambling')),
     re_path(r'^logout/$', views.logout_page),
     re_path(r'^accounts/login/$', views.login_redirect),
@@ -42,4 +43,4 @@ urlpatterns = [
     re_path(r'^accounts/', include('allauth.urls')),
     re_path(r'^', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-]
+    )
