@@ -23,7 +23,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from django.views.static import serve
 
-urlpatterns = i18n_patterns(
+urlpatterns = [
     re_path(r'^gambling/', include('gambling.urls', namespace='gambling')),
     re_path(r'^logout/$', views.logout_page),
     re_path(r'^accounts/login/$', views.login_redirect),
@@ -43,4 +43,4 @@ urlpatterns = i18n_patterns(
     re_path(r'^accounts/', include('allauth.urls')),
     re_path(r'^', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    )
+    ]
