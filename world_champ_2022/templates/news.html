@@ -20,7 +20,7 @@
 				<th>Очки до</th>
 				<th>Очки после</th>
 				<th>Заработано</th>
-			</tr>	
+			</tr>
 		</thead>
 		<tbody>
 			{% for sc in score_change %}
@@ -55,7 +55,7 @@
 			{% if mgp_data.match.command_2.flag %}
 			<img src="{{mgp_data.match.command_2.flag.url}}">
 			{% endif %}	<br/>
-			
+
 			{% load tz %}
 			{% localtime on %}
 			{{mgp_data.match.time|date:"o-m-d H:i:s"}} <br/>

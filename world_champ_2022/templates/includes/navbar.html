@@ -15,14 +15,11 @@
 				</li>
 				<li class="nav-item {% if active_tab == 'gambling' %}active{% endif %}">
 					<a class="nav-link" href="{% url 'gambling:list' %}">
-					<!-- <i class="fa fa-database" aria-hidden="true"></i> -->
-					<!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
 					<i class="fa fa-user" aria-hidden="true"></i>
 					Мои ставки</a>
 				</li>
 				<li class="nav-item {% if active_tab == 'results' %}active{% endif %}">
 					<a class="nav-link" href="{% url 'results' %}">
-					<!-- <i class="fa fa-ambulance" aria-hidden="true"></i> -->
 					<i class="fa fa-line-chart" aria-hidden="true"></i>
 					График состязания</a>
 				</li>
@@ -33,7 +30,6 @@
 				</li>
 				<li class="nav-item {% if active_tab == 'stats' %}active{% endif %}">
 					<a class="nav-link" href="{% url 'stats' %}">
-					<!-- <i class="fa fa-book" aria-hidden="true"></i> -->
 					<i class="fa fa-bar-chart" aria-hidden="true"></i>
 					Статистика прогнозов</a>
 				</li>
@@ -42,13 +38,6 @@
 					<i class="fa fa-futbol-o" aria-hidden="true"></i>
 					Чемпионат</a>
 				</li>
-				<!--
-				<li>
-					<a href="{% url 'updates' %}">
-					<i class="fa fa-bar-chart" aria-hidden="true"></i>
-					Обновления сайта</a>
-				</li>
-				-->
 			</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
@@ -59,8 +48,6 @@
 					{% endif %}
 				</li>
 			</ul>
-	<!-- <div id="nav"> -->
-	<!-- </div> -->
 		</div>
 	</div>
 </nav>

@@ -20,10 +20,6 @@
 				text: 'График состязания',
 				x: -20 //center
 			},
-			//subtitle: {
-			//	text: 'Source: WorldClimate.com',
-			//	x: -20
-			//},
 			xAxis: {
 				categories: [
 				'',
@@ -57,9 +53,6 @@
 				}]
 			},
 			tooltip: {
-				//headerFormat: '<b>{point.x}</b><br>',
-				//pointFormat: 'Пользователь: {series.name}<br>{point.key}Всего очков: {point.y}',
-				//valueSuffix: ''
 				useHTML: true,
 				formatter: function() {
 					if (this.point.prediction == 'firstPoint')
@@ -119,10 +112,7 @@
 
 <hr class="my-4">
 <br/>
-<div style="max-height: 800px; overflow:auto;"> 
-<!-- <div style="display: flex; justify-content: center"> -->
-<!-- <center> -->
-<!-- style="margin:0 auto" -->
+<div style="max-height: 800px; overflow:auto;">
 <table class="pure-table pure-table-bordered center_table">
 	<caption>Таблица результатов</caption>
 	<thead>
@@ -211,11 +201,9 @@
 				{% endif %}
 			{% endfor %}
 		</tr>
-
 		{% endfor %}
 	</tbody>
 </table>
-<!-- </center> -->
 </div>
 
 <br/>

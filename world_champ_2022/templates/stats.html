@@ -27,7 +27,7 @@
 			xAxis: {
 				categories: [
 				{% for us in us_list %}
-				'{{us.user.first_name}} {{us.user.last_name}} {% if us.user.player.money %}<img src="{% static "coins.png" %}" class="coin_icon"/>{% endif %}', 
+				'{{us.user.first_name}} {{us.user.last_name}} {% if us.user.player.money %}<img src="{% static "coins.png" %}" class="coin_icon"/>{% endif %}',
 				{% endfor %}
 				],
 				labels: {
@@ -42,15 +42,6 @@
 				title: {
 					text: 'Количество матчей'
 				},
-				/*
-				stackLabels: {
-					enabled: true,
-					style: {
-						fontWeight: 'bold',
-						color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-					}
-				} 
-				*/
 			},
 
 			tooltip: {
