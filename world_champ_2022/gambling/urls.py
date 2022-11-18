@@ -5,5 +5,5 @@ from . import views
 app_name = 'gambling'
 
 urlpatterns = [
-	re_path(r'^$', views.gambling_list, name='list'),
+    re_path(r'^$', views.gambling_list, name='list'),
 ]

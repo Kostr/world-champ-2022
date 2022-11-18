@@ -1,21 +1,21 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
+from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.utils import timezone
 from django.utils.timezone import localtime
 import datetime
-from datetime import timedelta
 
 from gambling.models import Match, MatchGuess, Command
-from django.db.models import Q
+
 
 def logout_page(request):
-	logout(request)
-	return HttpResponseRedirect('/')
+    logout(request)
+    return HttpResponseRedirect('/')
 
 def login_redirect(request):
-	return HttpResponseRedirect('/login')
+    return HttpResponseRedirect('/login')
 
 def start_page(request):
     return render(request, 'home.html')
@@ -79,7 +79,7 @@ def stats(request):
     us_list = []
     for user in users:
         data = {}
-        data['user']=user
+        data['user'] = user
         data['winner'] = uscores[user]['winner']
         data['difference'] = uscores[user]['difference']
         data['correct'] = uscores[user]['correct']
@@ -87,16 +87,11 @@ def stats(request):
         data['incorrect'] = uscores[user]['incorrect']
         us_list.append(data)
 
-    print("")
-    print(users)
-    print("")
-    print(us_list)
-    print("")
     return render(request, 'stats.html', {'users' : users, 'us_list' : us_list})
 
 def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
-    yesterday = timezone.make_aware(datetime.datetime.today() - timedelta(days=1), timezone.get_default_timezone())
+    yesterday = timezone.make_aware(datetime.datetime.today() - datetime.timedelta(days=1), timezone.get_default_timezone())
 
     matches = Match.objects.filter(time__lte=now, time__gt=yesterday)
 
@@ -142,7 +137,6 @@ def news(request):
         data['user_guesses']=usgp
         mgp.append(data)
 
-    ####
     total_scores_before={}
     for user in users:
         total_scores_before[user] = 0
@@ -172,7 +166,7 @@ def news(request):
                             total_scores_before[user]+=1
             except:
                 pass
-    ####
+
     total_scores_after={}
     for user in users:
         total_scores_after[user] = 0
@@ -261,7 +255,6 @@ def results(request):
                             data['exact_score_point']=1
 
             except:
-                #print str(e)
                 data['guess']=None
 
             data['total_point'] = data['victory_point'] + data['difference_point'] + data['exact_score_point']
@@ -400,6 +393,5 @@ def tournament(request):
                 group_table['commands_list'].append(e)
         group_table['commands_list'].sort(key=lambda x: x['place_score'], reverse=True)
         group_tables.append(group_table)
-        #print group_tables
 
     return render(request, 'tournament.html', {'group_tables' : group_tables})
