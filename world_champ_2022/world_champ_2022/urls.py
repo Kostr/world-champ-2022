@@ -27,7 +27,6 @@ urlpatterns = [
     re_path(r'^logout/$', views.logout_page),
     re_path(r'^accounts/login/$', views.login_redirect),
     re_path(r'^results/$', views.results, name='results'),
-    re_path(r'^updates/$', views.updates, name='updates'),
     re_path(r'^news/$', views.news, name='news'),
     re_path(r'^stats/$', views.stats, name='stats'),
     re_path(r'^tournament/$', views.tournament, name='tournament'),

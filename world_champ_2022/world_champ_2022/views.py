@@ -316,9 +316,6 @@ def results(request):
 
     return render(request, 'charts.html', {'match_score_guesses' : match_score_guesses, 'users' : users, 'chart_data' : chart_data})
 
-def updates(request):
-    return render(request, 'updates.html')
-
 def tournament(request):
     commands = Command.objects.all()
     matches = Match.objects.all()
