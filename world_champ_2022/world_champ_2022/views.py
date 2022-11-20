@@ -230,10 +230,16 @@ def results(request):
             data['victory_point']=0
             data['difference_point']=0
             data['exact_score_point']=0
-            try:
-                ug = guesses.filter(guesser=user).filter(match=match)[0]
-                data['guess']=ug
-                
+
+            ug = None
+            for mg in guesses:
+                if ((mg.guesser != user) or (mg.match != match)):
+                    continue
+                ug = mg
+                break
+            data['guess']=ug
+
+            if (ug):
                 if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
                     data['victory_point']=0
                     data['difference_point']=0
@@ -253,9 +259,6 @@ def results(request):
 
                         if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
                             data['exact_score_point']=1
-
-            except:
-                data['guess']=None
 
             data['total_point'] = data['victory_point'] + data['difference_point'] + data['exact_score_point']
 
