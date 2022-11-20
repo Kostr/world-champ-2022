@@ -227,7 +227,6 @@ def results(request):
         mt = match.time
         match_score_guess['enabled'] = (localtime(mt) < now)
 
-        user_guesses = []
         for user in users:
             data = {}
             data['user']=user
@@ -266,10 +265,8 @@ def results(request):
 
             total_points[user.pk] += data['victory_point'] + data['difference_point'] + data['exact_score_point']
             data['total_point'] = total_points[user.pk]
+            match_score_guess[user.pk] = data
 
-            user_guesses.append(data)
-
-        match_score_guess['user_guesses'] = user_guesses
         match_score_guesses.append(match_score_guess)
 
     chart_data = []
@@ -283,29 +280,29 @@ def results(request):
             if (not msg['enabled']):
                 continue
 
-            for ug in msg['user_guesses']:
-                if (ug['user']==user):
-                    data_element['score'] = ug['total_point']
-                    try:
-                        data_element['prediction'] = str(ug['guess'].guess_score_1) + " - " + str(ug['guess'].guess_score_2)
-                    except:
-                        data_element['prediction'] = u'отсутствует'
+            ug = msg[user.pk]
 
-                    data_element['match'] = msg['match'].command_1.name + " - " + msg['match'].command_2.name
+            data_element['score'] = ug['total_point']
+            try:
+                data_element['prediction'] = str(ug['guess'].guess_score_1) + " - " + str(ug['guess'].guess_score_2)
+            except:
+                data_element['prediction'] = u'отсутствует'
 
-                    if (msg['match'].penalty_score_1 != None):
-                        if (msg['match'].extra_score_1 != None):
-                            data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
-                        else:
-                            data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
-                    else:
-                        if (msg['match'].extra_score_1 != None):
-                            data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2)
-                        else:
-                            data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2)
+            data_element['match'] = msg['match'].command_1.name + " - " + msg['match'].command_2.name
 
-                    data_element['earned_points'] = ug['victory_point'] + ug['difference_point'] + ug['exact_score_point']
-                    data.append(data_element)
+            if (msg['match'].penalty_score_1 != None):
+                if (msg['match'].extra_score_1 != None):
+                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
+                else:
+                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
+            else:
+                if (msg['match'].extra_score_1 != None):
+                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2)
+                else:
+                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2)
+
+            data_element['earned_points'] = ug['victory_point'] + ug['difference_point'] + ug['exact_score_point']
+            data.append(data_element)
 
         chart_element['data']=data
         chart_data.append(chart_element)
