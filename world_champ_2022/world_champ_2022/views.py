@@ -210,8 +210,8 @@ def news(request):
 
 def results(request):
     users = get_players(request)
-    matches = Match.objects.all().order_by('time')
-    guesses = MatchGuess.objects.all()
+    matches = Match.objects.all().order_by('time').prefetch_related('command_1', 'command_2')
+    guesses = MatchGuess.objects.all().prefetch_related('guesser', 'match')
     match_score_guesses = []
 
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
