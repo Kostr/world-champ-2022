@@ -12,95 +12,102 @@
 <script src="https://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
 <script src="https://code.highcharts.com/modules/data.js" type="text/javascript"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js" type="text/javascript"></script>
+<script src="{% static 'js/no-data-to-display.js' %}" type="text/javascript"></script>
 
 <script>
-	$(function () {
-		$('#container').highcharts({
+$(function () {
+	results_chart = Highcharts.chart('container', {
+		title: {
+			text: 'График состязания',
+			x: -20 //center
+		},
+		xAxis: {
+			categories: []
+		},
+		yAxis: {
 			title: {
-				text: 'График состязания',
-				x: -20 //center
+				text: 'Очки'
 			},
-			xAxis: {
-				categories: [
-				'',
-				{% for msg in match_score_guesses %}
-					{% if msg.match.penalty_score_1 != None %}
-						{% if msg.match.extra_score_1 != None %}
-					'{{msg.match.command_1.name}} - {{msg.match.command_2.name}} ({{msg.match.score_1}} : {{msg.match.score_2}}, ДВ {{msg.match.extra_score_1}} : {{msg.match.extra_score_2}}, пен. {{msg.match.penalty_score_1}} : {{msg.match.penalty_score_2}})',
-						{% else %}
-					'{{msg.match.command_1.name}} - {{msg.match.command_2.name}} ({{msg.match.score_1}} : {{msg.match.score_2}}, пен. {{msg.match.penalty_score_1}} : {{msg.match.penalty_score_2}})',
-						{% endif %}
-					{% else %}
-						{% if msg.match.extra_score_1 != None %}
-					'{{msg.match.command_1.name}} - {{msg.match.command_2.name}} ({{msg.match.score_1}} : {{msg.match.score_2}}, ДВ {{msg.match.extra_score_1}} : {{msg.match.extra_score_2}})',
-						{% else %}
-					'{{msg.match.command_1.name}} - {{msg.match.command_2.name}} ({{msg.match.score_1}} : {{msg.match.score_2}})',
-						{% endif %}
-					{% endif %}
-				{% endfor %}
-					]
-				
-			},
-			yAxis: {
-				title: {
-					text: 'Очки'
-				},
-				tickInterval: 1,
-				plotLines: [{
-					value: 0,
-					width: 1,
-					color: '#808080'
-				}]
-			},
-			tooltip: {
-				useHTML: true,
-				formatter: function() {
-					if (this.point.prediction == 'firstPoint')
-						return '<b>' + this.series.name + '</b>'
-					return '<span style="font-size: 15px">' + this.series.name + '</span>' + 
-					'<br><b>Матч: </b>' + this.point.match + 
-					'<br><b>Счёт: </b>' + this.point.match_score +
-					'<br><b>Прогноз: </b>' + this.point.prediction +
-					'<br><b>Заработанные очки: </b>' + this.point.earned_points
-					;
-				}
-			},
-			legend: {
-				useHTML: true,
-				layout: 'vertical',
-				align: 'right',
-				verticalAlign: 'middle',
-				borderWidth: 0
-			},
-			series: [
-			{% for chart_element in chart_data %}
-			{
-				name: '{{chart_element.user.first_name}} {{chart_element.user.last_name}} {% if chart_element.user.player.money %}<img src="{% static "coins.png" %}" class="coin_icon"/>{% endif %}',
-				data: [
-				{y : 0, prediction : 'firstPoint'},
-				{% for data in chart_element.data %}
-				{ y : {{data.score}}, prediction : '{{data.prediction}}', match:  '{{data.match}}', match_score: '{{data.match_score}}', earned_points: '{{data.earned_points}}'},
-				{% endfor %}
-				]
-			},
-			{% endfor %}
-			],
-			responsive: {
-				rules: [{
-					condition: {
-						maxWidth: 500
-					},
-					chartOptions: {
-						legend: {
-							align: 'center',
-							verticalAlign: 'bottom',
-							layout: 'horizontal'
-						}
-					}
-				}]
+			tickInterval: 1,
+			plotLines: [{
+				value: 0,
+				width: 1,
+				color: '#808080'
+			}]
+		},
+		tooltip: {
+			useHTML: true,
+			formatter: function() {
+				if (this.point.prediction == 'firstPoint')
+					return '<b>' + this.series.name + '</b>'
+				return '<span style="font-size: 15px">' + this.series.name + '</span>' +
+				'<br><b>Матч: </b>' + this.point.match +
+				'<br><b>Счёт: </b>' + this.point.match_score +
+				'<br><b>Прогноз: </b>' + this.point.prediction +
+				'<br><b>Заработанные очки: </b>' + this.point.earned_points
+				;
 			}
-		});
+		},
+		legend: {
+			useHTML: true,
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'middle',
+			borderWidth: 0
+		},
+		series: [],
+		responsive: {
+			rules: [{
+				condition: {
+					maxWidth: 500
+				},
+				chartOptions: {
+					legend: {
+						align: 'center',
+						verticalAlign: 'bottom',
+						layout: 'horizontal'
+					}
+				}
+			}]
+		}
 	});
+
+	function showChartLoading(chart) {
+		chart.hideNoData();
+		chart.showLoading('<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>');
+	}
+
+	function errorChartLoading(chart) {
+		chart.hideLoading();
+		chart.showNoData("Ошибка при загрузке данных с сервера, попробуйте перезагрузить страницу");
+	}
+
+	showChartLoading(results_chart)
+
+	$.getJSON('/results_JSON', function(data){
+		data.chart_data.forEach((chart_element, index) => {
+			name = chart_element.user.first_name + " " + chart_element.user.last_name
+			if (chart_element.user.money) {
+				name += ' <img src="{% static "coins.png" %}" class="coin_icon"/>'
+			}
+			user_data = [{y : 0, prediction : 'firstPoint'}]
+			chart_element.data.forEach((d, i) => {
+				user_data.push({ y : d.score, prediction : d.prediction, match:  d.match, match_score: d.match_score, earned_points: d.earned_points})
+			});
+			results_chart.addSeries({name : name, data: user_data}, false)
+		});
+		categories = ['']
+		data.chart_data.forEach((chart_element, index) => {
+			chart_element.data.forEach((d, i) => {
+				category = d.match + " " + d.match_score
+				categories.push(category)
+			})
+		})
+		results_chart.xAxis[0].setCategories(categories, false)
+		results_chart.redraw();
+		results_chart.hideLoading();
+	});
+});
 </script>
 
 <br/>

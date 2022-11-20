@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.timezone import localtime
 import datetime
+import json
 
 from gambling.models import Match, MatchGuess, Command
 
@@ -31,6 +32,9 @@ def get_players(request):
     return users
 
 def stats(request):
+    return render(request, 'stats.html')
+
+def stats_JSON(request):
     users = get_players(request)
     matches = Match.objects.all()
 
@@ -79,7 +83,7 @@ def stats(request):
     us_list = []
     for user in users:
         data = {}
-        data['user'] = user
+        data['user'] = { 'first_name' : user.first_name, 'last_name' : user.last_name, 'money' : user.player.money }
         data['winner'] = uscores[user]['winner']
         data['difference'] = uscores[user]['difference']
         data['correct'] = uscores[user]['correct']
@@ -87,7 +91,7 @@ def stats(request):
         data['incorrect'] = uscores[user]['incorrect']
         us_list.append(data)
 
-    return render(request, 'stats.html', {'users' : users, 'us_list' : us_list})
+    return HttpResponse(json.dumps({'us_list' : us_list}))
 
 def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
@@ -209,6 +213,9 @@ def news(request):
     return render(request, 'news.html', {'mgp' : mgp, 'score_change' : score_change})   
 
 def results(request):
+    return render(request, 'charts.html')
+
+def results_JSON(request):
     users = get_players(request)
     matches = Match.objects.all().order_by('time').prefetch_related('command_1', 'command_2')
     guesses = MatchGuess.objects.all().prefetch_related('guesser', 'match')
@@ -304,10 +311,11 @@ def results(request):
             data_element['earned_points'] = ug['victory_point'] + ug['difference_point'] + ug['exact_score_point']
             data.append(data_element)
 
+        chart_element['user']={ 'first_name': user.first_name, 'last_name' : user.last_name, 'money' : user.player.money }
         chart_element['data']=data
         chart_data.append(chart_element)
 
-    return render(request, 'charts.html', {'match_score_guesses' : match_score_guesses, 'users' : users, 'chart_data' : chart_data})
+    return HttpResponse(json.dumps({'chart_data' : chart_data}))
 
 def tournament(request):
     commands = Command.objects.all()

@@ -12,132 +12,129 @@
 <script src="https://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
 <script src="https://code.highcharts.com/modules/data.js" type="text/javascript"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js" type="text/javascript"></script>
+<script src="{% static 'js/no-data-to-display.js' %}" type="text/javascript"></script>
 
 <script>
-	$(function () {
-		$('#container').highcharts({
-			chart: {
-				type: 'column'
-			},
+$(function () {
+	stats_chart = Highcharts.chart('container', {
+		chart: {
+			type: 'column'
+		},
 
+		title: {
+			text: 'Статистика прогнозов'
+		},
+
+		xAxis: {
+			categories: [],
+			labels: {
+				useHTML:true,
+			}
+		},
+
+		yAxis: {
+			allowDecimals: false,
+			min: 0,
+			tickInterval: 1,
 			title: {
-				text: 'Статистика прогнозов'
+				text: 'Количество матчей'
 			},
+		},
 
-			xAxis: {
-				categories: [
-				{% for us in us_list %}
-				'{{us.user.first_name}} {{us.user.last_name}} {% if us.user.player.money %}<img src="{% static "coins.png" %}" class="coin_icon"/>{% endif %}',
-				{% endfor %}
-				],
-				labels: {
-					useHTML:true,
+		tooltip: {
+			useHTML: true,
+			formatter: function () {
+				if  (this.series.options.stack == 'win') {
+					return '<b>' + this.x + '</b><br/>' +
+						this.series.name + ': ' + this.y + '<br/>' +
+						'Всего угадано матчей: ' + this.point.stackTotal;
+				} else {
+					return '<b>' + this.x + '</b><br/>' +
+						this.series.name + ': ' + this.y + '<br/>' +
+						'Всего не угадано матчей: ' + this.point.stackTotal;
 				}
-			},
+			}
+		},
 
-			yAxis: {
-				allowDecimals: false,
-				min: 0,
-				tickInterval: 1,
-				title: {
-					text: 'Количество матчей'
-				},
-			},
-
-			tooltip: {
-				useHTML: true,
-				formatter: function () {
-					if  (this.series.options.stack == 'win') {
-						return '<b>' + this.x + '</b><br/>' +
-							this.series.name + ': ' + this.y + '<br/>' +
-							'Всего угадано матчей: ' + this.point.stackTotal;
-					} else {
-						return '<b>' + this.x + '</b><br/>' +
-							this.series.name + ': ' + this.y + '<br/>' +
-							'Всего не угадано матчей: ' + this.point.stackTotal;
-					}
-				}
-			},
-
-			plotOptions: {
-				column: {
-					stacking: 'normal',
-					dataLabels: {
-						enabled: true,
-						color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-						style: {
-							textShadow: '0 0 3px black'
-						},
-						
-						formatter: function () {
-							if (this.y)
-								return this.y;
-							else
-								return ''
-						}
-					}
-				}
-			},
-
-			series: [{
-				name: 'Угадан только победитель',
-				data: [
-				{% for us in us_list %}
-					{{us.winner}},
-				{% endfor %}
-				],
-				stack: 'win'
-			}, {
-				name: 'Угадан только победитель и разница',
-				data: [
-				{% for us in us_list %}
-					{{us.difference}},
-				{% endfor %}
-				],
-				stack: 'win'
-			}, {
-				name: 'Угадан точный счёт',
-				data: [
-				{% for us in us_list %}
-					{{us.correct}},
-				{% endfor %}
-				],
-				stack: 'win'
-			}, {
-				name: 'Победитель не угадан',
-				data: [
-				{% for us in us_list %}
-					{{us.incorrect}},
-				{% endfor %}
-				],
-				stack: 'loose'
-			}, {
-				name: 'Ставка не сделана',
-				data: [
-				{% for us in us_list %}
-					{{us.missed}},
-				{% endfor %}
-				],
-				stack: 'loose'
-			}, 
-			],
-
-			responsive: {
-				rules: [{
-						condition: {
-						maxWidth: 500
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+					style: {
+						textShadow: '0 0 3px black'
 					},
-					chartOptions: {
-						legend: {
-							align: 'center',
-							verticalAlign: 'bottom',
-							layout: 'horizontal'
-						}
+					formatter: function () {
+						if (this.y)
+							return this.y;
+						else
+							return ''
 					}
-				}]
-			},
-		});
+				}
+			}
+		},
+
+		series: [],
+
+		responsive: {
+			rules: [{
+					condition: {
+					maxWidth: 500
+				},
+				chartOptions: {
+					legend: {
+						align: 'center',
+						verticalAlign: 'bottom',
+						layout: 'horizontal'
+					}
+				}
+			}]
+		},
 	});
+
+	function showChartLoading(chart) {
+		chart.hideNoData();
+		chart.showLoading('<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>');
+	}
+
+	function errorChartLoading(chart) {
+		chart.hideLoading();
+		chart.showNoData("Ошибка при загрузке данных с сервера, попробуйте перезагрузить страницу");
+	}
+
+	showChartLoading(stats_chart)
+
+	$.getJSON('/stats_JSON', function(data){
+		var winner = []
+		var difference = []
+		var correct = []
+		var incorrect = []
+		var missed = []
+		var categories = []
+		data.us_list.forEach((us, index) => {
+			winner.push(us.winner)
+			difference.push(us.difference)
+			correct.push(us.correct)
+			incorrect.push(us.incorrect)
+			missed.push(us.missed)
+			category = us.user.first_name + ' ' + us.user.last_name
+			if (us.user.money) {
+			category += ' '
+			category += '<img src="{% static "coins.png" %}" class="coin_icon"/>'
+			}
+			categories.push(category)
+		});
+		stats_chart.addSeries({ name: 'Угадан только победитель', data: winner, stack: 'win'}, false);
+		stats_chart.addSeries({ name: 'Угадан только победитель и разница', data: difference, stack: 'win'}, false);
+		stats_chart.addSeries({ name: 'Угадан точный счёт', data: correct, stack: 'win'}, false);
+		stats_chart.addSeries({ name: 'Победитель не угадан', data: incorrect, stack: 'loose'}, false);
+		stats_chart.addSeries({ name: 'Ставка не сделана', data: missed, stack: 'loose'}, false);
+		stats_chart.xAxis[0].setCategories(categories, false)
+		stats_chart.redraw();
+		stats_chart.hideLoading();
+	});
+});
 </script>
 
 <br/>
