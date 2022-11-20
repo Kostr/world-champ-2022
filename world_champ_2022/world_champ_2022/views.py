@@ -216,6 +216,10 @@ def results(request):
 
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
 
+    total_points = {}
+    for user in users:
+        total_points[user.pk] = 0
+
     for match in matches:
         match_score_guess = {}
         match_score_guess['match'] = match
@@ -260,18 +264,8 @@ def results(request):
                         if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
                             data['exact_score_point']=1
 
-            data['total_point'] = data['victory_point'] + data['difference_point'] + data['exact_score_point']
-
-            for msg in match_score_guesses:
-                for usg in msg['user_guesses']:
-                    try:
-                        if (usg['guess'].guesser == user):
-                            data['total_point'] += usg['victory_point']
-                            data['total_point'] += usg['difference_point']
-                            data['total_point'] += usg['exact_score_point']
-                    except:
-                        pass
-                        
+            total_points[user.pk] += data['victory_point'] + data['difference_point'] + data['exact_score_point']
+            data['total_point'] = total_points[user.pk]
 
             user_guesses.append(data)
 
