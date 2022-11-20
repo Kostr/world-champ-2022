@@ -280,8 +280,7 @@ def results(request):
 
         for msg in match_score_guesses:
             data_element = {}
-            mt = msg['match'].time
-            if (localtime(mt) > now):
+            if (not msg['enabled']):
                 continue
 
             for ug in msg['user_guesses']:
