@@ -288,7 +288,7 @@ def results_JSON(request):
 
 def tournament(request):
     commands = Command.objects.all()
-    matches = Match.objects.all()
+    matches = Match.objects.select_related('command_1', 'command_2').all()
 
     group_names = commands.values_list('group', flat=True).distinct().order_by('group')
 
@@ -307,7 +307,7 @@ def tournament(request):
         command_data['goal_difference'] = 0;
         command_data['goals'] = 0;
         command_data['place_score'] = 0;
-        command_group_matches = group_matches.filter(Q(command_1=command) | Q(command_2=command))
+        command_group_matches = [match for match in group_matches if (match.command_1 == command) or (match.command_2 == command)]
         for command_group_match in command_group_matches:
             if ((command_group_match.score_1 == None) or (command_group_match.score_2 == None)):
                 continue
