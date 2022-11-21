@@ -7,46 +7,31 @@ from django.utils.timezone import localtime
 from .models import Match, MatchGuess, Command
 
 
-def score_for_guess(user, match):
-    data = {}
-    data['user']=user
-    data['victory_point']=0
-    data['difference_point']=0
-    data['exact_score_point']=0
-    try:
-        ug = MatchGuess.objects.all().filter(guesser=user).filter(match=match)[0]
-        data['guess']=ug
+def score_from_match(match_score_1, match_score_2, guess_score_1, guess_score_2):
+    score = 0
+    if ((match_score_1 == None) or (match_score_2 == None) or (guess_score_1 == None) or (guess_score_2 == None)):
+        return score
 
-        if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-            data['victory_point']=0
-            data['difference_point']=0
-            data['exact_score_point']=0
-        else:
-            if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                data['victory_point']=1
+    if (((match_score_1 > match_score_2) and (guess_score_1 > guess_score_2)) or
+        ((match_score_1 < match_score_2) and (guess_score_1 < guess_score_2)) or
+        ((match_score_1 == match_score_2) and (guess_score_1 == guess_score_2))):
+        score += 1
 
-                if (match.score_1 > match.score_2):
-                    if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                        data['difference_point']=1
-                else:
-                    if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                        data['difference_point']=1
+    if (match_score_1 > match_score_2):
+        if ((match_score_1 - match_score_2) == (guess_score_1 - guess_score_2)):
+            score += 1
+    else:
+        if ((match_score_2 - match_score_1) == (guess_score_2 - guess_score_1)):
+            score += 1
 
-                if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                    data['exact_score_point']=1
+    if ((match_score_1 == guess_score_1) and (match_score_2 == guess_score_2)):
+        score += 1
 
-    except Exception as e:
-        data['guess']=None
-
-    data['total_point'] = data['victory_point'] + data['difference_point'] + data['exact_score_point']
-    print(data)
-    return data
-
+    return score
 
 def gambling_list(request):
-    matches = Match.objects.all().order_by("time")
+    matches = Match.objects.select_related('command_1').all().order_by("time")
+    guesses = MatchGuess.objects.select_related('match').filter(guesser = request.user)
 
     anchor = ''
     now = localtime(timezone.now())
@@ -62,7 +47,7 @@ def gambling_list(request):
                     break;
 
                 try:
-                    mg = MatchGuess.objects.all().filter(match = match).filter(guesser = request.user)[0]
+                    mg = [guess for guess in guesses if (guess.match == match)][0]
                     mg.guess_score_1 = request.POST['result1']
                     mg.guess_score_2 = request.POST['result2']
                     mg.save()
@@ -76,19 +61,18 @@ def gambling_list(request):
                     pass
                 anchor = 'mg_' + str(match.id)
 
+    guesses = MatchGuess.objects.select_related('match').filter(guesser = request.user)
     match_info_guesses = []
     past_match_info_guesses = []
     for match in matches:
         match_info_guess={}
         match_info_guess['match'] = match
         try:
-            mg = MatchGuess.objects.all().filter(match = match).filter(guesser = request.user)[0]
-            match_info_guess['guess'] = mg
+            match_info_guess['guess'] = [guess for guess in guesses if (guess.match == match)][0]
         except:
             match_info_guess['guess'] = None
 
-        mt = match.time
-        match_info_guess['enabled'] = (localtime(mt) > now)
+        match_info_guess['enabled'] = (localtime(match.time) > now)
 
         if (match.stage == Match.MATCH_CLASS_GROUP):
             match_info_guess['stage'] = u"Групповой этап. Группа " + match.command_1.group
@@ -98,9 +82,11 @@ def gambling_list(request):
                 if match_class_tuple[0] == match.stage:
                     match_info_guess['stage'] = match_class_tuple[1]
 
-        mt = match.time
-        if (localtime(mt) < now):
-            match_info_guess['plus_score'] = score_for_guess(request.user, match)['total_point']
+        if (not match_info_guess['enabled']):
+            try:
+                match_info_guess['plus_score'] = score_from_match(match.score_1, match.score_2, match_info_guess['guess'].guess_score_1, match_info_guess['guess'].guess_score_2)
+            except:
+                match_info_guess['plus_score'] = 0
             past_match_info_guesses.append(match_info_guess)
         else:
             match_info_guesses.append(match_info_guess)
