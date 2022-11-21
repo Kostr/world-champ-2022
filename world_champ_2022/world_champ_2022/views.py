@@ -24,11 +24,11 @@ def start_page(request):
 def get_players(request):
     try:
         if (request.user.player.nicevt) and (not request.user.is_superuser):
-            users = User.objects.filter(player__nicevt=True)
+            users = User.objects.select_related('player').filter(player__nicevt=True)
         else:
-            users = User.objects.all()
+            users = User.objects.select_related('player').all()
     except:
-        users = User.objects.all()
+        users = User.objects.select_related('player').all()
     return users
 
 def stats(request):
@@ -37,6 +37,7 @@ def stats(request):
 def stats_JSON(request):
     users = get_players(request)
     matches = Match.objects.all()
+    guesses = MatchGuess.objects.select_related('guesser', 'match').all()
 
     uscores = {}
     for user in users:
@@ -53,7 +54,7 @@ def stats_JSON(request):
 
         for user in users:
             try:
-                ug = MatchGuess.objects.filter(guesser=user).filter(match=match)[0]
+                ug = [guess for guess in guesses if (guess.guesser.pk == user.pk) and (guess.match == match)][0]
 
                 if ((ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
                     uscores[user]['missed']+=1
