@@ -93,15 +93,38 @@ def stats_JSON(request):
 
     return HttpResponse(json.dumps({'us_list' : us_list}))
 
+def score_from_match(match_score_1, match_score_2, guess_score_1, guess_score_2):
+    score = 0
+    if ((match_score_1 == None) or (match_score_2 == None) or (guess_score_1 == None) or (guess_score_2 == None)):
+        return score
+
+    if (((match_score_1 > match_score_2) and (guess_score_1 > guess_score_2)) or
+        ((match_score_1 < match_score_2) and (guess_score_1 < guess_score_2)) or
+        ((match_score_1 == match_score_2) and (guess_score_1 == guess_score_2))):
+        score += 1
+
+    if (match_score_1 > match_score_2):
+        if ((match_score_1 - match_score_2) == (guess_score_1 - guess_score_2)):
+            score += 1
+    else:
+        if ((match_score_2 - match_score_1) == (guess_score_2 - guess_score_1)):
+            score += 1
+
+    if ((match_score_1 == guess_score_1) and (match_score_2 == guess_score_2)):
+        score += 1
+
+    return score
+
 def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
     yesterday = timezone.make_aware(datetime.datetime.today() - datetime.timedelta(days=1), timezone.get_default_timezone())
 
-    matches = Match.objects.filter(time__lte=now, time__gt=yesterday)
+    guesses = MatchGuess.objects.select_related('guesser').all()
 
     users = get_players(request)
 
     mgp = []
+    matches = Match.objects.filter(time__lte=now, time__gt=yesterday)
     for match in matches:
         data={}
         data['match']=match
@@ -110,94 +133,39 @@ def news(request):
             usgp_data={}
             usgp_data['user']=user
             try:
-                ug = MatchGuess.objects.filter(guesser=user).filter(match=match)[0]
-
-                usgp_data['guess']= ug
-                usgp_data['score']=0
-
-                if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-                    usgp_data['score']=0
-                else:
-                    if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                        ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                        ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                        usgp_data['score']+=1
-
-                        if (match.score_1 > match.score_2):
-                            if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                                usgp_data['score']+=1
-                        else:
-                            if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                                usgp_data['score']+=1
-
-                        if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                            usgp_data['score']+=1
-
+                ug = [guess for guess in guesses if (guess.guesser.pk == user.pk) and (guess.match == match)][0]
+                usgp_data['guess'] = ug
+                usgp_data['score'] = 0
+                usgp_data['score'] += score_from_match(match.score_1, match.score_2, ug.guess_score_1, ug.guess_score_2)
             except:
-                usgp_data['guess']= None
-                usgp_data['score']=0
+                usgp_data['guess'] = None
+                usgp_data['score'] = 0
 
             usgp.append(usgp_data)
         data['user_guesses']=usgp
         mgp.append(data)
 
     total_scores_before={}
+    total_scores_after={}
     for user in users:
         total_scores_before[user] = 0
+        total_scores_after[user] = 0
 
     matches = Match.objects.filter(time__lte=yesterday)
     for match in matches:
         for user in users:
             try:
-                ug = MatchGuess.objects.filter(guesser=user).filter(match=match)[0]
-                
-                if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-                    pass
-                else:
-                    if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                        ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                        ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                        total_scores_before[user]+=1
-
-                        if (match.score_1 > match.score_2):
-                            if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                                total_scores_before[user]+=1
-                        else:
-                            if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                                total_scores_before[user]+=1
-
-                        if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                            total_scores_before[user]+=1
+                ug = [guess for guess in guesses if (guess.guesser.pk == user.pk) and (guess.match == match)][0]
+                total_scores_before[user] += score_from_match(match.score_1, match.score_2, ug.guess_score_1, ug.guess_score_2)
             except:
                 pass
-
-    total_scores_after={}
-    for user in users:
-        total_scores_after[user] = 0
 
     matches = Match.objects.filter(time__lte=now)
     for match in matches:
         for user in users:
             try:
-                ug = MatchGuess.objects.filter(guesser=user).filter(match=match)[0]
-
-                if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-                    pass
-                else:
-                    if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                        ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                        ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                        total_scores_after[user]+=1
-
-                        if (match.score_1 > match.score_2):
-                            if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                                total_scores_after[user]+=1
-                        else:
-                            if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                                total_scores_after[user]+=1
-
-                        if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                            total_scores_after[user]+=1
+                ug = [guess for guess in guesses if (guess.guesser.pk == user.pk) and (guess.match == match)][0]
+                total_scores_after[user] += score_from_match(match.score_1, match.score_2, ug.guess_score_1, ug.guess_score_2)
             except:
                 pass
 
