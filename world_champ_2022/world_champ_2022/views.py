@@ -120,7 +120,7 @@ def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
     yesterday = timezone.make_aware(datetime.datetime.today() - datetime.timedelta(days=1), timezone.get_default_timezone())
 
-    guesses = MatchGuess.objects.select_related('guesser').all()
+    guesses = MatchGuess.objects.select_related('guesser', 'match').all()
 
     users = get_players(request)
 
