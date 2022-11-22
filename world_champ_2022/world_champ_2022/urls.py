@@ -14,27 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
 from django.views.static import serve
 
 from . import views
 
 urlpatterns = [
-    re_path(r'^gambling/', include('gambling.urls', namespace='gambling')),
+    re_path(r'^', include('gambling.urls', namespace='gambling')),
     re_path(r'^logout/$', views.logout_page),
     re_path(r'^accounts/login/$', views.login_redirect),
-    re_path(r'^results/$', views.results, name='results'),
-    re_path(r'^results_JSON/$', views.results_JSON, name='results_JSON'),
-    re_path(r'^news/$', views.news, name='news'),
-    re_path(r'^stats/$', views.stats, name='stats'),
-    re_path(r'^stats_JSON/$', views.stats_JSON, name='stats_JSON'),
-    re_path(r'^tournament/$', views.tournament, name='tournament'),
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^$', views.start_page, name='home'),
     re_path(r'^accounts/', include('allauth.urls')),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]

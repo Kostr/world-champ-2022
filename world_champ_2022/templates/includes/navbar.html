@@ -19,22 +19,22 @@
 					Мои ставки</a>
 				</li>
 				<li class="nav-item {% if active_tab == 'results' %}active{% endif %}">
-					<a class="nav-link" href="{% url 'results' %}">
+					<a class="nav-link" href="{% url 'gambling:results' %}">
 					<i class="fa fa-line-chart" aria-hidden="true"></i>
 					График состязания</a>
 				</li>
 				<li class="nav-item {% if active_tab == 'news' %}active{% endif %}">
-					<a class="nav-link" href="{% url 'news' %}">
+					<a class="nav-link" href="{% url 'gambling:news' %}">
 					<i class="fa fa-newspaper-o" aria-hidden="true"></i>
 					Последние результаты</a>
 				</li>
 				<li class="nav-item {% if active_tab == 'stats' %}active{% endif %}">
-					<a class="nav-link" href="{% url 'stats' %}">
+					<a class="nav-link" href="{% url 'gambling:stats' %}">
 					<i class="fa fa-bar-chart" aria-hidden="true"></i>
 					Статистика прогнозов</a>
 				</li>
 				<li class="nav-item {% if active_tab == 'tournament' %}active{% endif %}">
-					<a class="nav-link" href="{% url 'tournament' %}">
+					<a class="nav-link" href="{% url 'gambling:tournament' %}">
 					<i class="fa fa-futbol-o" aria-hidden="true"></i>
 					Чемпионат</a>
 				</li>
