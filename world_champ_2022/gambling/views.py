@@ -115,9 +115,11 @@ def get_players(request):
         users = User.objects.select_related('player').all()
     return users
 
+@require_GET
 def stats(request):
     return render(request, 'gambling/stats.html')
 
+@require_GET
 def stats_JSON(request):
     users = get_players(request)
     matches = Match.objects.all()
@@ -178,6 +180,7 @@ def stats_JSON(request):
 
     return HttpResponse(json.dumps({'us_list' : us_list}))
 
+@require_GET
 def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
     yesterday = timezone.make_aware(datetime.datetime.today() - datetime.timedelta(days=1), timezone.get_default_timezone())
@@ -243,9 +246,11 @@ def news(request):
 
     return render(request, 'gambling/news.html', {'mgp' : mgp, 'score_change' : score_change})
 
+@require_GET
 def results(request):
     return render(request, 'gambling/charts.html')
 
+@require_GET
 def results_JSON(request):
     users = get_players(request)
     matches = Match.objects.all().order_by('time').prefetch_related('command_1', 'command_2')
@@ -348,6 +353,7 @@ def results_JSON(request):
 
     return HttpResponse(json.dumps({'chart_data' : chart_data}))
 
+@require_GET
 def tournament(request):
     commands = Command.objects.all()
     matches = Match.objects.select_related('command_1', 'command_2').all()
