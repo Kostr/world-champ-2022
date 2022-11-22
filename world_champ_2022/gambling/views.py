@@ -170,28 +170,6 @@ def stats_JSON(request):
 
     return HttpResponse(json.dumps({'us_list' : us_list}))
 
-def score_from_match(match_score_1, match_score_2, guess_score_1, guess_score_2):
-    score = 0
-    if ((match_score_1 == None) or (match_score_2 == None) or (guess_score_1 == None) or (guess_score_2 == None)):
-        return score
-
-    if (((match_score_1 > match_score_2) and (guess_score_1 > guess_score_2)) or
-        ((match_score_1 < match_score_2) and (guess_score_1 < guess_score_2)) or
-        ((match_score_1 == match_score_2) and (guess_score_1 == guess_score_2))):
-        score += 1
-
-    if (match_score_1 > match_score_2):
-        if ((match_score_1 - match_score_2) == (guess_score_1 - guess_score_2)):
-            score += 1
-    else:
-        if ((match_score_2 - match_score_1) == (guess_score_2 - guess_score_1)):
-            score += 1
-
-    if ((match_score_1 == guess_score_1) and (match_score_2 == guess_score_2)):
-        score += 1
-
-    return score
-
 def news(request):
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
     yesterday = timezone.make_aware(datetime.datetime.today() - datetime.timedelta(days=1), timezone.get_default_timezone())
