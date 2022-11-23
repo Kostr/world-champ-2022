@@ -7,8 +7,5 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-def login_redirect(request):
-    return HttpResponseRedirect('/login')
-
 def start_page(request):
     return render(request, 'home.html')

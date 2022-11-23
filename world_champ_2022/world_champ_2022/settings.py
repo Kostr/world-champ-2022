@@ -63,7 +63,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-LOGIN_URL = '/login'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
 ACCOUNT_SIGNUP_FORM_CLASS = 'gambling.forms.SignupForm'

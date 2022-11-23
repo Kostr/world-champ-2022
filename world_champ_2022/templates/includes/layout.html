@@ -1,29 +1,17 @@
 {% extends "includes/layout_base.html" %}
 {% block main %}
 		<div class="site-container">
-			{% if user.is_authenticated %}
-				{% load tz %}
-				{% timezone "Europe/Moscow" %}
-					{% block navbar %}{% endblock %}
-					<div class="container">
-						<div class="main_container">
-							{% block h1 %}{% endblock %}
-							<hr/>
-							{% block content %}{% endblock %}
-						</div>
-						<br/>
+			{% load tz %}
+			{% timezone "Europe/Moscow" %}
+				{% block navbar %}{% endblock %}
+				<div class="container">
+					<div class="main_container">
+						{% block h1 %}{% endblock %}
+						<hr/>
+						{% block content %}{% endblock %}
 					</div>
-				{% endtimezone %}
-			{% else %}
-				<div class="jumbotron">
-					<div class="container">
-						<div class="col-xs-12">
-							<br/>
-							<p>В настоящее время вы не авторизованы на сервере.</p>
-							<p>Для входа в систему необходимо использовать страницу <a href="/login?next={{ request.get_full_path | urlencode}}">login</a></p>
-						</div>
-					</div>
+					<br/>
 				</div>
-			{% endif %}
+			{% endtimezone %}
 		</div>
 {% endblock %}

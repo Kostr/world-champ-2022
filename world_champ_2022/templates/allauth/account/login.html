@@ -43,40 +43,32 @@
 						{% endif %}
 
 						<div class="login_form">
-							<form method="post" action="{% url 'login' %}?next={{next | urlencode}}" class="form-horizontal">
-								
+							<form method="post" action="{% url 'account_login' %}?next={{next | urlencode}}" class="form-horizontal">
 								{% csrf_token %}
 								<div class="row row-content">
-									<div class="col-xs-12  col-sm-12">
-										<div class="form-group">
+									<p>
 										<label for="id_username" class="control-label">Имя пользователя:</label>
-											{{ form.username }}
-										</div>
-									</div>
+											{{ form.login }}
+									</p>
 
-									<div class="col-xs-12  col-sm-12">
-										<div class="form-group">
+									<p>
 										<label for="id_password" class="control-label">Пароль:</label>
 											{{ form.password }}
-										</div>
-									</div>
+									</p>
 
 								</div>
 								
-								
-									<div class="col-xs-12  col-sm-12">
-										
+								<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+									<div class="form-group">
+									<button  type="submit" id="submit_btn" class="btn btn-primary">Вход <span class="glyphicon glyphicon-log-in"></span></button>
+									{% if redirect_field_value %}
+									<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+									{% endif %}
 									</div>
-
-									<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
-										<div class="form-group">
-										<button  type="submit" id="submit_btn" class="btn btn-primary">Вход <span class="glyphicon glyphicon-log-in"></span></button>
-										<input type="hidden" name="next" value="{{next}}" />
-										</div>
-									</div>
-									<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
-										<a href="{% url 'password_reset' %}">Забыли пароль?</a>
-									</div>
+								</div>
+								<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+									<a href="{% url 'account_reset_password' %}">Забыли пароль?</a>
+								</div>
 							</form>
 						</div>
 					</div>
