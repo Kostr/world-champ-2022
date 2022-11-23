@@ -4,13 +4,13 @@
 		
 {% block title %}{% endblock %}
 {% block extra_head %}
-		<style type="text/css">
-			form {
-				width: 100%;
-				margin: 0 auto;
-				float: left;
-			}
-
+	<style type="text/css">
+		form {
+			width: 100%;
+			margin: 0 auto;
+			float: left;
+		}
+		@media (min-width:200px) {
 			label, input {
 				/* in order to define widths */
 				display: inline-block;
@@ -28,90 +28,83 @@
 				   and margin-left to create a gutter between the label and input */
 				margin: 0 20% 0 4%;
 			}
-		</style>
+		}
+	</style>
 {% endblock %}
-{% block main %}
-	<div class="site-container">
-		<div class="container">
-			<div class="jumbotron">
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12">
-						<h1>Для входа в систему введите имя пользователя и пароль:</h2>
-						<br/>
-						{% if form.errors %}
-							<p>Неправильные имя пользователя или пароль. Попробуйте снова.</p>
+{% block body %}
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12">
+			<div class="d-flex justify-content-center">
+			<h1>Войдите в личный кабинет</h2>
+			</div>
+			<hr class="my-4">
+			<br/>
+			{% if form.errors %}
+				<p>Неправильные имя пользователя или пароль. Попробуйте снова.</p>
+			{% endif %}
+			<div class="login_form">
+				<form method="post" action="{% url 'account_login' %}?next={{next | urlencode}}" class="form-horizontal">
+					{% csrf_token %}
+					<div class="row row-content">
+						<p>
+							<label for="id_username" class="control-label">Имя пользователя:</label>
+								{{ form.login }}
+						</p>
+						<p>
+							<label for="id_password" class="control-label">Пароль:</label>
+								{{ form.password }}
+						</p>
+					</div>
+					<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+						<div class="form-group">
+						<button  type="submit" id="submit_btn" class="btn btn-primary">Вход <span class="glyphicon glyphicon-log-in"></span></button>
+						{% if redirect_field_value %}
+						<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 						{% endif %}
-
-						<div class="login_form">
-							<form method="post" action="{% url 'account_login' %}?next={{next | urlencode}}" class="form-horizontal">
-								{% csrf_token %}
-								<div class="row row-content">
-									<p>
-										<label for="id_username" class="control-label">Имя пользователя:</label>
-											{{ form.login }}
-									</p>
-
-									<p>
-										<label for="id_password" class="control-label">Пароль:</label>
-											{{ form.password }}
-									</p>
-
-								</div>
-								
-								<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
-									<div class="form-group">
-									<button  type="submit" id="submit_btn" class="btn btn-primary">Вход <span class="glyphicon glyphicon-log-in"></span></button>
-									{% if redirect_field_value %}
-									<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-									{% endif %}
-									</div>
-								</div>
-								<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
-									<a href="{% url 'account_reset_password' %}">Забыли пароль?</a>
-								</div>
-							</form>
 						</div>
 					</div>
-				</div>
+					<div class="col-xs-12  col-sm-12 d-flex justify-content-center">
+						<a href="{% url 'account_reset_password' %}">Забыли пароль?</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
-				<hr class="my-4">
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-				Не зарегистрированы?  
-					</div>
-				</div>
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-					<a href="/accounts/signup" class="mysocial btn btn-primary" role="button">Зарегистрироваться</a>
-					</div>
-				</div>
-				<hr class="my-4">
+	<hr class="my-4">
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+			<p>Не зарегистрированы?</p>
+		</div>
+	</div>
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+		<a href="/accounts/signup" class="mysocial btn btn-primary" role="button">Зарегистрироваться</a>
+		</div>
+	</div>
+	<hr class="my-4">
 
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-						Также доступна авторизация через социальные сети:
-					</div>
-				</div>
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+			<p>Также доступна авторизация через социальные сети:</p>
+		</div>
+	</div>
 
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-						<a href="{% provider_login_url "vk" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-facebook" role="button"><span class="fa fa-vk"></span>Войти через VK</a>
-					</div>
-				</div>
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+			<a href="{% provider_login_url "vk" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-facebook" role="button"><span class="fa fa-vk"></span>Войти через VK</a>
+		</div>
+	</div>
 
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-						<a href="{% provider_login_url "google" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-google" role="button"><span class="fa fa-google"></span>Войти через Google</a>
-					</div>
-				</div>
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+			<a href="{% provider_login_url "google" method="oauth2" %}" class="mysocial btn btn-default btn-lg btn-social btn-google" role="button"><span class="fa fa-google"></span>Войти через Google</a>
+		</div>
+	</div>
 
-				<div class="row row-content">
-					<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
-						<a href="{% provider_login_url "github" %}" class="mysocial btn btn-default btn-lg btn-social btn-github" role="button"><span class="fa fa-github"></span>Войти через github</a>
-					</div>
-				</div>
-				
-			</div><!-- jumbotron -->
+	<div class="row row-content">
+		<div class="col-xs-12 col-sm-12 d-flex justify-content-center">
+			<a href="{% provider_login_url "github" %}" class="mysocial btn btn-default btn-lg btn-social btn-github" role="button"><span class="fa fa-github"></span>Войти через github</a>
 		</div>
 	</div>
 {% endblock %}

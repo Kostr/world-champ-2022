@@ -34,7 +34,7 @@
 			<td>
 				<form action="{% url 'gambling:predict' match_pk=mig.match.id %}" method="post">
 					{% csrf_token %}
-					<select name="result1" required {% if not mig.enabled %}disabled{% endif %}>
+					<select class="form-select-sm" name="result1" required {% if not mig.enabled %}disabled{% endif %}>
 						{% if mig.guess %}
 						<option value=""></option>
 							{% for score_choise in score_choices %}
@@ -52,7 +52,7 @@
 						{% endif %}
 					</select>
 					:
-					<select name="result2" required {% if not mig.enabled %}disabled{% endif %}>
+					<select class="form-select-sm" name="result2" required {% if not mig.enabled %}disabled{% endif %}>
 						{% if mig.guess %}
 						<option value=""></option>
 							{% for score_choise in score_choices %}
@@ -73,9 +73,9 @@
 					<br/><br/>
 					{% if mig.enabled %}
 						{% if mig.guess %}
-					<input type="submit" name="action_{{mig.match.id}}" value="Изменить"/>
+					<input class="btn btn-light" type="submit" name="action_{{mig.match.id}}" value="Изменить"/>
 						{% else %}
-					<input type="submit" name="action_{{mig.match.id}}" value="Добавить"/>
+					<input class="btn btn-light" type="submit" name="action_{{mig.match.id}}" value="Добавить"/>
 						{% endif %}
 					{% endif %}
 				</form>

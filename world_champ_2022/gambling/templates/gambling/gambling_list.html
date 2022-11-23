@@ -17,27 +17,26 @@
 {% endif %}
 
 <div class="accordion" aria-multiselectable="true" id="myaccordion">
-	<div class="card">
-		<div class="card-header">
+	<div class="accordion-item">
+		<div class="accordion-header">
 			<h3 class="mb-0">
-				<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#future_mathes">Предстоящие матчи</button>
+				<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#future_mathes">Предстоящие матчи</button>
 			</h3>
 		</div>
-		<div id="future_mathes" class="collapse show" aria-labelledby="headingOne" data-parent="#myaccordion">
-			<div class="card-body">
+		<div id="future_mathes" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-parent="#myaccordion">
+			<div class="accordion-body">
 				{% include 'gambling/includes/future_matches_table.html' %}
 			</div>
 		</div>
 	</div>
-	<br/>
-	<div class="card">
-		<div class="card-header">
+	<div class="accordion-item">
+		<div class="accordion-header">
 			<h3 class="mb-0">
-				<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#past_mathes">Прошедшие матчи</button>
+				<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#past_mathes">Прошедшие матчи</button>
 			</h3>
 		</div>
-		<div id="past_mathes" class="collapse show" aria-labelledby="headingOne" data-parent="#myaccordion">
-			<div class="card-body">
+		<div id="past_mathes" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-parent="#myaccordion">
+			<div class="accordion-body">
 				{% include 'gambling/includes/past_matches_table.html' %}
 			</div>
 		</div>
