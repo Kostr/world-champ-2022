@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -33,6 +34,7 @@ def score_from_match(match_score_1, match_score_2, guess_score_1, guess_score_2)
 
     return score
 
+@login_required
 @require_POST
 def predict(request, match_pk):
     match = get_object_or_404(Match, pk=match_pk)
@@ -64,6 +66,7 @@ def predict(request, match_pk):
 
     return HttpResponseRedirect(link)
 
+@login_required
 @require_GET
 def gambling_list(request):
     matches = Match.objects.select_related('command_1').all().order_by("time")
