@@ -136,34 +136,37 @@ def stats_JSON(request):
         if ((match.score_1 == None) or (match.score_2 == None)):
             continue
 
+        match_guesses = [guess for guess in guesses if (guess.match == match)]
         for user in users:
-            try:
-                ug = [guess for guess in guesses if (guess.guesser.pk == user.pk) and (guess.match == match)][0]
-
-                if ((ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-                    uscores[user]['missed']+=1
-                else:
-                    if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                        ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                        ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                        uscores[user]['winner']+=1
-
-                        if (match.score_1 > match.score_2):
-                            if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                                uscores[user]['winner']-=1
-                                uscores[user]['difference']+=1
-                        else:
-                            if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                                uscores[user]['winner']-=1
-                                uscores[user]['difference']+=1
-
-                        if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                            uscores[user]['difference']-=1
-                            uscores[user]['correct']+=1
-                    else:
-                        uscores[user]['incorrect']+=1
-            except:
+            ug_list = [guess for guess in match_guesses if (guess.guesser.pk == user.pk)]
+            if (not ug_list):
                 uscores[user]['missed']+=1
+                continue
+
+            ug = ug_list[0]
+
+            if ((ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
+                uscores[user]['missed']+=1
+            else:
+                if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
+                    ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
+                    ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
+                    uscores[user]['winner']+=1
+
+                    if (match.score_1 > match.score_2):
+                        if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
+                            uscores[user]['winner']-=1
+                            uscores[user]['difference']+=1
+                    else:
+                        if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
+                            uscores[user]['winner']-=1
+                            uscores[user]['difference']+=1
+
+                    if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
+                        uscores[user]['difference']-=1
+                        uscores[user]['correct']+=1
+                else:
+                    uscores[user]['incorrect']+=1
 
     us_list = []
     for user in users:
