@@ -81,6 +81,20 @@ $(function () {
 		chart.hideLoading();
 		chart.showNoData("Ошибка при загрузке данных с сервера, попробуйте перезагрузить страницу");
 	}
+	function matchScore(score_1, score_2, extra_score_1, extra_score_2, penalty_score_1, penalty_score_2) {
+		if ((score_1 == null) || (score_2 == null))
+			return ""
+
+		var resultStr = score_1.toString() + " - " + score_2.toString()
+
+		if ((extra_score_1 != null) && (extra_score_2 != null)) {
+			resultStr += (", ДВ " + extra_score_1.toString() + " - " + extra_score_2.toString())
+		}
+		if ((penalty_score_1 != null) && (penalty_score_2 != null)) {
+			resultStr += ", пен. " + penalty_score_1.toString() + " - " + penalty_score_2.toString()
+		}
+		return resultStr;
+	}
 
 	showChartLoading(results_chart)
 
@@ -92,14 +106,16 @@ $(function () {
 			}
 			user_data = [{y : 0, prediction : 'firstPoint'}]
 			chart_element.data.forEach((d, i) => {
-				user_data.push({ y : d.score, prediction : d.prediction, match:  d.match, match_score: d.match_score, earned_points: d.earned_points})
+				var match_score = matchScore(d.match_score.score_1, d.match_score.score_2, d.match_score.extra_score_1, d.match_score.extra_score_2, d.match_score.penalty_score_1, d.match_score.penalty_score_2)
+				user_data.push({ y : d.score, prediction : d.prediction, match: d.match, match_score: match_score, earned_points: d.earned_points})
 			});
 			results_chart.addSeries({name : name, data: user_data}, false)
 		});
 		categories = ['']
 		data.chart_data.forEach((chart_element, index) => {
 			chart_element.data.forEach((d, i) => {
-				category = d.match + " " + d.match_score
+				var match_score = matchScore(d.match_score.score_1, d.match_score.score_2, d.match_score.extra_score_1, d.match_score.extra_score_2, d.match_score.penalty_score_1, d.match_score.penalty_score_2)
+				category = d.match + " " + match_score
 				categories.push(category)
 			})
 		})

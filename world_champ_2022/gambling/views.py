@@ -258,100 +258,38 @@ def results_JSON(request):
     users = get_players(request)
     matches = Match.objects.all().order_by('time').prefetch_related('command_1', 'command_2')
     guesses = MatchGuess.objects.all().prefetch_related('guesser', 'match')
-    match_score_guesses = []
 
     now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
 
-    total_points = {}
-    for user in users:
-        total_points[user.pk] = 0
-
-    for match in matches:
-        match_score_guess = {}
-        match_score_guess['match'] = match
-
-        mt = match.time
-        match_score_guess['enabled'] = (localtime(mt) < now)
-
-        for user in users:
-            data = {}
-            data['user']=user
-            data['victory_point']=0
-            data['difference_point']=0
-            data['exact_score_point']=0
-
-            ug = None
-            for mg in guesses:
-                if ((mg.guesser != user) or (mg.match != match)):
-                    continue
-                ug = mg
-                break
-            data['guess']=ug
-
-            if (ug):
-                if ((match.score_1 == None) or (match.score_2 == None) or (ug.guess_score_1 == None) or (ug.guess_score_2 == None)):
-                    data['victory_point']=0
-                    data['difference_point']=0
-                    data['exact_score_point']=0
-                else:
-                    if (((match.score_1 > match.score_2) and (ug.guess_score_1 > ug.guess_score_2)) or
-                        ((match.score_1 < match.score_2) and (ug.guess_score_1 < ug.guess_score_2)) or
-                        ((match.score_1 == match.score_2) and (ug.guess_score_1 == ug.guess_score_2))):
-                        data['victory_point']=1
-
-                        if (match.score_1 > match.score_2):
-                            if ((match.score_1 - match.score_2) == (ug.guess_score_1 - ug.guess_score_2)):
-                                data['difference_point']=1
-                        else:
-                            if ((match.score_2 - match.score_1) == (ug.guess_score_2 - ug.guess_score_1)):
-                                data['difference_point']=1
-
-                        if ((match.score_1 == ug.guess_score_1) and (match.score_2 == ug.guess_score_2)):
-                            data['exact_score_point']=1
-
-            total_points[user.pk] += data['victory_point'] + data['difference_point'] + data['exact_score_point']
-            data['total_point'] = total_points[user.pk]
-            match_score_guess[user.pk] = data
-
-        match_score_guesses.append(match_score_guess)
-
+    past_matches = [match for match in matches if (localtime(match.time) < now)]
     chart_data = []
     for user in users:
         chart_element = {}
-        chart_element['user']=user
-        data=[]
-
-        for msg in match_score_guesses:
-            data_element = {}
-            if (not msg['enabled']):
-                continue
-
-            ug = msg[user.pk]
-
-            data_element['score'] = ug['total_point']
-            try:
-                data_element['prediction'] = str(ug['guess'].guess_score_1) + " - " + str(ug['guess'].guess_score_2)
-            except:
-                data_element['prediction'] = u'отсутствует'
-
-            data_element['match'] = msg['match'].command_1.name + " - " + msg['match'].command_2.name
-
-            if (msg['match'].penalty_score_1 != None):
-                if (msg['match'].extra_score_1 != None):
-                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
-                else:
-                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', пен. ' + str(msg['match'].penalty_score_1) + " - " + str(msg['match'].penalty_score_2)
-            else:
-                if (msg['match'].extra_score_1 != None):
-                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2) + u', ДВ ' + str(msg['match'].extra_score_1) + " - " + str(msg['match'].extra_score_2)
-                else:
-                    data_element['match_score'] = str(msg['match'].score_1) + " - " + str(msg['match'].score_2)
-
-            data_element['earned_points'] = ug['victory_point'] + ug['difference_point'] + ug['exact_score_point']
-            data.append(data_element)
-
         chart_element['user']={ 'first_name': user.first_name, 'last_name' : user.last_name, 'money' : user.player.money }
-        chart_element['data']=data
+        chart_element['data']=[]
+        user_guesses = [guess for guess in guesses if guess.guesser.pk == user.pk]
+        user_score = 0
+        for match in past_matches:
+            match_data = {'score': user_score, 'prediction' : u'отсутствует', 'match' : '', 'match_score' : '', 'earned_points' : 0}
+            match_data['match'] = match.command_1.name + " - " + match.command_2.name
+            match_data['match_score'] = {
+                "score_1" : match.score_1,
+                "score_2" : match.score_2,
+                "extra_score_1" : match.extra_score_1,
+                "extra_score_2" : match.extra_score_2,
+                "penalty_score_1" : match.penalty_score_1,
+                "penalty_score_2" : match.penalty_score_2,
+            }
+            for guess in user_guesses:
+                if (guess.match.pk == match.pk):
+                    if ((guess.guess_score_1 != None) and (guess.guess_score_2 != None)):
+                        match_data['prediction'] = str(guess.guess_score_1) + " - " + str(guess.guess_score_2)
+                    match_data['earned_points'] = score_from_match(match.score_1, match.score_2, guess.guess_score_1, guess.guess_score_2)
+                    user_score += match_data['earned_points']
+                    match_data['score'] = user_score
+                    break
+
+            chart_element['data'].append(match_data)
         chart_data.append(chart_element)
 
     return HttpResponse(json.dumps({'chart_data' : chart_data}))
