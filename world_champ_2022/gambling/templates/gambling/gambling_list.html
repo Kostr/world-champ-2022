@@ -8,7 +8,18 @@
 
 {% block content %}
 
-<br/>
+<div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3 m-3 z-index=3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-kkk-toast="stack">
+	<div class="toast-header">
+		<strong class="me-auto" id="toastHeader"></strong>
+		<small></small>
+		<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+	</div>
+	<div class="toast-body">
+		Прогноз изменён
+	</div>
+  </div>
+</div>
 
 {% if error %}
 	<span style="font-size:20px; color:Red;">Матч уже начался, изменение ставки невозможно!</span>
@@ -43,5 +54,121 @@
 	</div>
 	<br/>
 </div>
+
+<script>
+jQuery(document).ajaxSend(function(event, xhr, settings) {
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+	function sameOrigin(url) {
+		// url could be relative or scheme relative or absolute
+		var host = document.location.host; // host + port
+		var protocol = document.location.protocol;
+		var sr_origin = '//' + host;
+		var origin = protocol + sr_origin;
+		// Allow absolute or scheme relative URLs to same origin
+		return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+			(url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+			// or any other URL that isn't scheme relative or absolute i.e relative.
+			!(/^(\/\/|http:|https:).*/.test(url));
+	}
+	function safeMethod(method) {
+		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	}
+
+	if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+		xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+	}
+});
+
+
+$(document).ready(function () {
+	const container = document.getElementById('toastContainer');
+	const targetElement = document.querySelector('[data-kkk-toast="stack"]'); // Use CSS class or HTML attr to avoid duplicating ids
+
+	// Remove base element markup
+	targetElement.parentNode.removeChild(targetElement);
+
+	function addToast(headerText, bodyText) {
+		const newToast = targetElement.cloneNode(true);
+		newToast.innerHTML = '\
+<div class="toast-header">\
+  <strong class="me-auto" id="toastHeader">' + headerText +'</strong>\
+  <small></small> \
+  <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>\
+</div>\
+<div class="toast-body">' + bodyText + '\
+</div> \
+'
+		container.append(newToast);
+		const toast = bootstrap.Toast.getOrCreateInstance(newToast, {"delay" : 15000});
+		toast.show();
+	}
+
+	{% for mig in match_info_guesses %}
+		$("#{{mig.match.id}}").submit(function (e) {
+			e.preventDefault();
+			var serializedData = $(this).serialize();
+			var initialText = e.target.elements.action_{{mig.match.id}}.value
+			e.target.elements.action_{{mig.match.id}}.value = "..."
+			e.target.elements.result1.disabled = true
+			e.target.elements.result2.disabled = true
+			e.target.elements.action_{{mig.match.id}}.disabled = true
+			$.ajax({
+				type: 'POST',
+				url: "{% url 'gambling:predict' match_pk=mig.match.id %}",
+				data: serializedData,
+				success: function (response) {
+					addToast(
+						'<img src="{{mig.match.command_1.flag.url}}" class="flag_icon"> ' +
+						'{{mig.match.command_1.name}} - {{mig.match.command_2.name}} ' +
+						'<img src="{{mig.match.command_2.flag.url}}" class="flag_icon">',
+						'<i class="fa fa-check-circle text-success" aria-hidden="true"></i>  ' +
+						'Прогноз изменён на <strong>' +
+						e.target.elements.result1.value + ' : ' + e.target.elements.result2.value +
+						'</strong>'
+					);
+					e.target.elements.action_{{mig.match.id}}.value = initialText;
+					e.target.elements.result1.disabled = false
+					e.target.elements.result2.disabled = false
+					e.target.elements.action_{{mig.match.id}}.disabled = false;
+				},
+				error: function (response) {
+					var data = response.responseJSON;
+					var errorText = ""
+					if ("error" in data)
+						if (data["error"] == 2)
+							errorText = " Матч уже начался!"
+					addToast(
+						'<img src="{{mig.match.command_1.flag.url}}" class="flag_icon"> ' +
+						'{{mig.match.command_1.name}} - {{mig.match.command_2.name}} ' +
+						'<img src="{{mig.match.command_2.flag.url}}" class="flag_icon">',
+						'<i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>  ' +
+						'Ошибка! Не удалось изменить прогноз на <strong>' +
+						e.target.elements.result1.value + ' : ' + e.target.elements.result2.value +
+						'</strong>' + errorText
+					);
+					e.target.elements.action_{{mig.match.id}}.value = initialText;
+					e.target.elements.result1.disabled = false
+					e.target.elements.result2.disabled = false
+					e.target.elements.action_{{mig.match.id}}.disabled = false;
+				}
+			})
+		})
+	{% endfor %}
+})
+</script>
 
 {% endblock %}

@@ -36,7 +36,7 @@
 			</td>
 
 			<td>
-				<form action="{% url 'gambling:predict' match_pk=mig.match.id %}" method="post">
+				<form id="{{mig.match.id}}" action="{% url 'gambling:predict' match_pk=mig.match.id %}" method="post">
 					{% csrf_token %}
 					<select class="form-select-sm" name="result1" required {% if not mig.enabled %}disabled{% endif %}>
 						{% if mig.guess %}

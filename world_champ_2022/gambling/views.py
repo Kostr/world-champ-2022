@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import localtime
@@ -37,16 +37,15 @@ def score_from_match(match_score_1, match_score_2, guess_score_1, guess_score_2)
 @login_required
 @require_POST
 def predict(request, match_pk):
-    match = get_object_or_404(Match, pk=match_pk)
+    match = Match.objects.filter(pk=match_pk).first()
+    if (not match):
+        return JsonResponse({"error": 1}, status=400)
+
     now = localtime(timezone.now())
-    error = False
-    anchor = ''
-    link = '/gambling'
     guess = MatchGuess.objects.filter(guesser = request.user, match = match_pk).first()
 
     if (localtime(match.time) < now):
-        error = True
-        return HttpResponseRedirect(link + '?error=1')
+        return JsonResponse({"error": 2}, status=400)
 
     if (guess):
         guess.guess_score_1 = request.POST.get('result1')
@@ -59,12 +58,8 @@ def predict(request, match_pk):
                    guess_score_1 = request.POST.get('result1'),
                    guess_score_2 = request.POST.get('result2'),
                    )
-    anchor = 'mg_' + str(match.id)
 
-    if (anchor):
-        link += ('#' + anchor)
-
-    return HttpResponseRedirect(link)
+    return JsonResponse({"match": match_pk}, status=200)
 
 @login_required
 @require_GET
