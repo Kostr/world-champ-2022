@@ -64,7 +64,7 @@ def predict(request, match_pk):
 @login_required
 @require_GET
 def gambling_list(request):
-    matches = Match.objects.select_related('command_1').all().order_by("time")
+    matches = Match.objects.select_related('command_1', 'command_2').all().order_by("time")
     guesses = MatchGuess.objects.select_related('match').filter(guesser = request.user)
 
     now = localtime(timezone.now())
