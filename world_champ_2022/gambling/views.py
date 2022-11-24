@@ -223,7 +223,8 @@ def news(request):
             usgp_data['user']=user
             ug_list = [guess for guess in match_guesses if (guess.guesser.pk == user.pk)]
             if (ug_list):
-                usgp_data['guess'] = ug_list[0]
+                ug = ug_list[0]
+                usgp_data['guess'] = ug
                 usgp_data['score'] = score_from_match(match.score_1, match.score_2, ug.guess_score_1, ug.guess_score_2)
             else:
                 usgp_data['guess'] = None
