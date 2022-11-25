@@ -1,0 +1,2363 @@
+{% extends "includes/layout.html" %}
+{% load static %}
+{% block title %}Тотализатор по чемпионату мира по футболу 2018{% endblock %}
+
+{% block extra_head %}
+<link rel="shortcut icon" type="image/png" href="{% static 'world2018.ico' %}">
+<style>
+@font-face {
+	font-family: 'dusha';
+	src: url('{% static 'fonts/dusha.ttf' %}') format("truetype"),
+		 local('{% static 'fonts/dusha.ttf' %}');
+}
+
+h1,h2,h3 {
+	font-family: dusha
+}
+
+body {
+	background-image: url('{% static 'world2018_background.png' %}');
+	background-color: #fff;
+	background-repeat: repeat-x;
+	background-position: center 0px;
+	background-attachment: fixed;
+	background-size: auto 100vh;
+}
+
+@media (min-width: 576px) {
+	#main_logo {width:50%;}
+	body {background-size: auto 100vh;}
+}
+</style>
+{% endblock %}
+
+{% block navbar %} {% include "includes/navbar.html" with active_tab='results' %} {% endblock %}
+
+{% block h1 %}<h1>Тотализатор по чемпионату мира по футболу 2018</h1>{% endblock %}
+
+{% block content %}
+<br/>
+<div class="row row-content">
+	<div class="col-12">
+		<div class="d-flex justify-content-center">
+			<div id="main_logo">
+				<img src="/static/928px-2018_FIFA_World_Cup.svg_.png" class="img-responsive img-rounded img-fluid" style="width:85%; height:auto;" alt="cup_logo">
+			</div>
+		</div>
+	</div>
+</div>
+<br/>
+<hr/>
+
+<script src="https://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+<script src="https://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
+<script src="https://code.highcharts.com/modules/data.js" type="text/javascript"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js" type="text/javascript"></script>
+
+<script>
+$(function () {
+	results_chart = Highcharts.chart('container', {
+		title: {
+			text: 'График состязания',
+			x: -20 //center
+		},
+		xAxis: {
+			categories: [
+				'',
+				'Россия - Саудовская Аравия (5 : 0)',
+				'Египет - Уругвай (0 : 1)',
+				'Марокко - Иран (0 : 1)',
+				'Португалия - Испания (3 : 3)',
+				'Франция - Австралия (2 : 1)',
+				'Аргентина - Исландия (1 : 1)',
+				'Перу - Дания (0 : 1)',
+				'Хорватия - Нигерия (2 : 0)',
+				'Коста-Рика - Сербия (0 : 1)',
+				'Германия - Мексика (0 : 1)',
+				'Бразилия - Швейцария (1 : 1)',
+				'Швеция - Республика Корея (1 : 0)',
+				'Бельгия - Панама (3 : 0)',
+				'Тунис - Англия (1 : 2)',
+				'Колумбия - Япония (1 : 2)',
+				'Польша - Сенегал (1 : 2)',
+				'Россия - Египет (3 : 1)',
+				'Португалия - Марокко (1 : 0)',
+				'Уругвай - Саудовская Аравия (1 : 0)',
+				'Иран - Испания (0 : 1)',
+				'Дания - Австралия (1 : 1)',
+				'Франция - Перу (1 : 0)',
+				'Аргентина - Хорватия (0 : 3)',
+				'Бразилия - Коста-Рика (2 : 0)',
+				'Нигерия - Исландия (2 : 0)',
+				'Сербия - Швейцария (1 : 2)',
+				'Бельгия - Тунис (5 : 2)',
+				'Республика Корея - Мексика (1 : 2)',
+				'Германия - Швеция (2 : 1)',
+				'Англия - Панама (6 : 1)',
+				'Япония - Сенегал (2 : 2)',
+				'Польша - Колумбия (0 : 3)',
+				'Саудовская Аравия - Египет (2 : 1)',
+				'Уругвай - Россия (3 : 0)',
+				'Испания - Марокко (2 : 2)',
+				'Иран - Португалия (1 : 1)',
+				'Австралия - Перу (0 : 2)',
+				'Дания - Франция (0 : 0)',
+				'Нигерия - Аргентина (1 : 2)',
+				'Исландия - Хорватия (1 : 2)',
+				'Мексика - Швеция (0 : 3)',
+				'Республика Корея - Германия (2 : 0)',
+				'Сербия - Бразилия (0 : 2)',
+				'Швейцария - Коста-Рика (2 : 2)',
+				'Сенегал - Колумбия (0 : 1)',
+				'Япония - Польша (0 : 1)',
+				'Панама - Тунис (1 : 2)',
+				'Англия - Бельгия (0 : 1)',
+				'Франция - Аргентина (4 : 3)',
+				'Уругвай - Португалия (2 : 1)',
+				'Испания - Россия (1 : 1, ДВ 1 : 1, пен. 3 : 4)',
+				'Хорватия - Дания (1 : 1, ДВ 1 : 1, пен. 3 : 2)',
+				'Бразилия - Мексика (2 : 0)',
+				'Бельгия - Япония (3 : 2)',
+				'Швеция - Швейцария (1 : 0)',
+				'Колумбия - Англия (1 : 1, ДВ 1 : 1, пен. 3 : 4)',
+				'Уругвай - Франция (0 : 2)',
+				'Бразилия - Бельгия (1 : 2)',
+				'Швеция - Англия (0 : 2)',
+				'Россия - Хорватия (1 : 1, ДВ 2 : 2, пен. 3 : 4)',
+				'Франция - Бельгия (1 : 0)',
+				'Хорватия - Англия (1 : 1, ДВ 2 : 1)',
+				'Бельгия - Англия (2 : 0)',
+				'Франция - Хорватия (4 : 2)',
+			]
+		},
+		yAxis: {
+			title: {
+				text: 'Очки'
+			},
+			tickInterval: 1,
+			plotLines: [{
+				value: 0,
+				width: 1,
+				color: '#808080'
+			}]
+		},
+		tooltip: {
+			useHTML: true,
+			formatter: function() {
+				if (this.point.prediction == 'firstPoint')
+					return '<b>' + this.series.name + '</b>'
+				return '<span style="font-size: 15px">' + this.series.name + '</span>' +
+				'<br><b>Матч: </b>' + this.point.match +
+				'<br><b>Счёт: </b>' + this.point.match_score +
+				'<br><b>Прогноз: </b>' + this.point.prediction +
+				'<br><b>Заработанные очки: </b>' + this.point.earned_points
+				;
+			}
+		},
+		legend: {
+			useHTML: true,
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'middle',
+			borderWidth: 0
+		},
+		series: [
+			{
+				name: 'Сергей Бирюков <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 3, prediction : '1 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '2'},
+				{ y : 3, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 3', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 4, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 4, prediction : '3 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 4, prediction : '1 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '0 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 4, prediction : '2 - 0', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '3 - 2', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '3 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 4, prediction : '0 - 1', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : '2 - 1', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 6, prediction : '0 - 3', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 6, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 6, prediction : '2 - 1', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 7, prediction : '2 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 8, prediction : '3 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 9, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 10, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 10, prediction : 'отсутствует', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 11, prediction : '2 - 0', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 11, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 12, prediction : '3 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 12, prediction : '0 - 3', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 15, prediction : '1 - 2', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '3'},
+				{ y : 16, prediction : '2 - 1', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 17, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 18, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 19, prediction : '3 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 19, prediction : '3 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 20, prediction : '1 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 20, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 20, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 20, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 20, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 20, prediction : 'отсутствует', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 20, prediction : 'отсутствует', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 20, prediction : 'отсутствует', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '0'},
+				{ y : 20, prediction : 'отсутствует', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 20, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 20, prediction : '1 - 3', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 21, prediction : '1 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 21, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 21, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Max Ershov ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : '1 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 1, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 1, prediction : '0 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : '0 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 4, prediction : '2 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 4, prediction : '3 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 7, prediction : '0 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '3'},
+				{ y : 10, prediction : '2 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '3'},
+				{ y : 10, prediction : '1 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 10, prediction : '3 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 10, prediction : '3 - 2', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 12, prediction : '3 - 2', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '2'},
+				{ y : 13, prediction : '4 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 14, prediction : '0 - 3', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 14, prediction : '1 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 14, prediction : '1 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 15, prediction : '2 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 17, prediction : '2 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '2'},
+				{ y : 18, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 19, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 22, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 24, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 25, prediction : '1 - 2', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 26, prediction : '2 - 1', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 26, prediction : '1 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 26, prediction : '1 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 27, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 29, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 32, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 33, prediction : '3 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 33, prediction : '1 - 0', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 33, prediction : '1 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 33, prediction : '1 - 3', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 33, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 33, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 33, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 33, prediction : 'отсутствует', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 33, prediction : 'отсутствует', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 36, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 37, prediction : '0 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 37, prediction : '1 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 37, prediction : '1 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 40, prediction : '0 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '3'},
+				{ y : 40, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 41, prediction : '1 - 3', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '1'},
+				{ y : 43, prediction : '1 - 2', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 43, prediction : 'отсутствует', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 43, prediction : '2 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 43, prediction : '3 - 0', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 43, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 44, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 45, prediction : '3 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 45, prediction : '2 - 2', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 45, prediction : '1 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 46, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 46, prediction : '2 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 47, prediction : '0 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 47, prediction : '1 - 3', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 47, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 47, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 47, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 47, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Никита Петров <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '1 - 3', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 5, prediction : '2 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 5, prediction : '2 - 3', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 7, prediction : '1 - 2', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '2'},
+				{ y : 8, prediction : '3 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 9, prediction : '1 - 3', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 9, prediction : '5 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 9, prediction : '3 - 2', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 9, prediction : '1 - 2', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 10, prediction : '2 - 1', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 11, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 11, prediction : '1 - 1', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 11, prediction : '2 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 11, prediction : '2 - 2', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 12, prediction : '3 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 13, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 14, prediction : '0 - 4', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 14, prediction : '1 - 0', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 16, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 16, prediction : '2 - 2', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 17, prediction : '2 - 1', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 17, prediction : '0 - 2', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 17, prediction : '1 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '1 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 19, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 22, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 23, prediction : '2 - 1', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 25, prediction : '1 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '2'},
+				{ y : 25, prediction : '2 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 25, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 26, prediction : '2 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '1'},
+				{ y : 26, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 26, prediction : '0 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 27, prediction : '1 - 2', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '1'},
+				{ y : 27, prediction : '2 - 3', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 28, prediction : '0 - 3', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 28, prediction : '2 - 1', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 28, prediction : '1 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 28, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 28, prediction : '1 - 1', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 28, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '1 - 3', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 29, prediction : '1 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 31, prediction : '0 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '2'},
+				{ y : 31, prediction : '2 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 33, prediction : '2 - 1', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 34, prediction : '2 - 0', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 34, prediction : '1 - 2', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 34, prediction : '3 - 2', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 34, prediction : '1 - 3', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 34, prediction : '2 - 3', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 34, prediction : '0 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 34, prediction : '1 - 0', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 36, prediction : '1 - 3', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '2'},
+				{ y : 39, prediction : '1 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 39, prediction : '2 - 0', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 39, prediction : '2 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 39, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 39, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 39, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 39, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Alexander Agarkov ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : 'отсутствует', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 0, prediction : 'отсутствует', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 1, prediction : '3 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 2, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 3, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 3, prediction : '1 - 2', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 3, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 6, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 6, prediction : '1 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 6, prediction : '2 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 6, prediction : 'отсутствует', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '0'},
+				{ y : 7, prediction : '0 - 3', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 10, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 11, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 13, prediction : '1 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '2'},
+				{ y : 13, prediction : '2 - 0', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 13, prediction : '1 - 3', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 13, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 13, prediction : '4 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 13, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 16, prediction : '0 - 2', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '3'},
+				{ y : 16, prediction : '1 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 19, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 20, prediction : '0 - 3', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 20, prediction : '2 - 2', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 20, prediction : '0 - 3', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 21, prediction : '1 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 21, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 23, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 23, prediction : '1 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 23, prediction : '1 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 25, prediction : '2 - 3', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 25, prediction : '1 - 2', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 28, prediction : '2 - 1', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 30, prediction : '2 - 2', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '2'},
+				{ y : 30, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 30, prediction : 'отсутствует', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 30, prediction : 'отсутствует', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 32, prediction : '2 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '2'},
+				{ y : 34, prediction : '2 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '2'},
+				{ y : 34, prediction : '1 - 1', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 36, prediction : '2 - 3', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 37, prediction : '1 - 2', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 37, prediction : '0 - 2', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 37, prediction : '1 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 37, prediction : '2 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 38, prediction : '3 - 2', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 38, prediction : '1 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Alexander Frolov ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 3, prediction : '1 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '2'},
+				{ y : 3, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 4, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 4, prediction : '2 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : '0 - 2', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 7, prediction : '3 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '2'},
+				{ y : 7, prediction : '1 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '3 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '2 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '1'},
+				{ y : 11, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 14, prediction : '1 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 14, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 14, prediction : '2 - 1', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 14, prediction : '1 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 14, prediction : 'отсутствует', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '0'},
+				{ y : 15, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 16, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 19, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 21, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 22, prediction : '1 - 2', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 25, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 25, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 25, prediction : '1 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 26, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 26, prediction : 'отсутствует', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '0'},
+				{ y : 26, prediction : 'отсутствует', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '0'},
+				{ y : 26, prediction : 'отсутствует', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '0'},
+				{ y : 26, prediction : 'отсутствует', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 26, prediction : 'отсутствует', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 26, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 26, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 26, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 26, prediction : '0 - 3', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 26, prediction : '1 - 0', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 28, prediction : '1 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '2'},
+				{ y : 31, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 32, prediction : '0 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 32, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 32, prediction : '0 - 3', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 35, prediction : '0 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '3'},
+				{ y : 35, prediction : '2 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 37, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 40, prediction : '0 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '3'},
+				{ y : 42, prediction : '0 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '2'},
+				{ y : 42, prediction : '1 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 44, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 44, prediction : '1 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 47, prediction : '1 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '3'},
+				{ y : 47, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 48, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 49, prediction : '2 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 49, prediction : '1 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 49, prediction : '0 - 1', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 50, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 50, prediction : '2 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 50, prediction : '2 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 50, prediction : '2 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 52, prediction : '2 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '2'},
+				{ y : 52, prediction : '1 - 2', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 52, prediction : '1 - 3', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 53, prediction : '9 - 0', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '1'},
+				]
+			},
+			{
+				name: 'Михаил Пашко ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '3 - 2', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '1 - 3', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '2 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '1 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '2'},
+				{ y : 5, prediction : '3 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 5, prediction : '3 - 2', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : '2 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : '2 - 2', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 5, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Николай Хорошилов ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : '1 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 3, prediction : '0 - 1', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '3'},
+				{ y : 6, prediction : '0 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '3'},
+				{ y : 6, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 7, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 7, prediction : '1 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 10, prediction : '0 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '3'},
+				{ y : 10, prediction : '1 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 10, prediction : '1 - 0', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 10, prediction : '3 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 10, prediction : '2 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 13, prediction : '1 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '3'},
+				{ y : 14, prediction : '1 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 15, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 15, prediction : '1 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 17, prediction : '0 - 1', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '2'},
+				{ y : 17, prediction : '1 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 18, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 21, prediction : '1 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '3'},
+				{ y : 22, prediction : '1 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 25, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 26, prediction : '2 - 0', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 26, prediction : '1 - 0', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 29, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 29, prediction : '1 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 29, prediction : '1 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 30, prediction : '1 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 31, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 32, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 33, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 33, prediction : '0 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 34, prediction : '0 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 34, prediction : '0 - 1', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 34, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 34, prediction : '3 - 1', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 34, prediction : '0 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 34, prediction : '1 - 0', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 34, prediction : '1 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 36, prediction : '0 - 1', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '2'},
+				{ y : 36, prediction : '2 - 0', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 36, prediction : '2 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 36, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 39, prediction : '0 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '3'},
+				{ y : 39, prediction : '0 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 39, prediction : '2 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 39, prediction : '1 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 40, prediction : '0 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '1'},
+				{ y : 40, prediction : '2 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 41, prediction : '2 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '1'},
+				{ y : 41, prediction : '1 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 41, prediction : '3 - 2', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 41, prediction : '2 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 44, prediction : '2 - 0', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 44, prediction : 'отсутствует', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 44, prediction : '0 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 44, prediction : '0 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 45, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 45, prediction : '3 - 0', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 46, prediction : '0 - 3', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 46, prediction : '1 - 0', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 48, prediction : '2 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '2'},
+				{ y : 48, prediction : '0 - 2', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 48, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 48, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Женя Строкач ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '1 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 3, prediction : '1 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '2'},
+				{ y : 3, prediction : '0 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 6, prediction : '2 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 6, prediction : '3 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 6, prediction : '1 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 6, prediction : '0 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 9, prediction : '0 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 9, prediction : '2 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 9, prediction : '3 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 9, prediction : '1 - 1', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 10, prediction : '1 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 12, prediction : '0 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 12, prediction : '1 - 1', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 12, prediction : '1 - 1', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 12, prediction : '1 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 13, prediction : '3 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 14, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 15, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 18, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 20, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 20, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 23, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 23, prediction : '1 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : '1 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 24, prediction : '2 - 1', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 25, prediction : '1 - 3', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 27, prediction : '3 - 2', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '2'},
+				{ y : 28, prediction : '3 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 28, prediction : '1 - 2', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 28, prediction : '0 - 0', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 28, prediction : '1 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 29, prediction : '3 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '1'},
+				{ y : 29, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 29, prediction : '2 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 31, prediction : '2 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '2'},
+				{ y : 34, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 37, prediction : '1 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 38, prediction : '1 - 2', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '1'},
+				{ y : 38, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 39, prediction : '1 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 39, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 41, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 41, prediction : '2 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '3'},
+				{ y : 44, prediction : '2 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 44, prediction : '3 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 44, prediction : '3 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 45, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 46, prediction : '2 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 48, prediction : '2 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '2'},
+				{ y : 50, prediction : '2 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '2'},
+				{ y : 51, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 51, prediction : '3 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 52, prediction : '1 - 2', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 52, prediction : '1 - 2', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 52, prediction : '1 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 52, prediction : '1 - 2', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 52, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 52, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Кирилл Курочкин ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '3 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '0 - 3', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '0 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 5, prediction : '2 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 5, prediction : '1 - 2', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : '2 - 2', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '3 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '2'},
+				{ y : 7, prediction : '1 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 2', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 10, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 12, prediction : '0 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 12, prediction : '1 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 12, prediction : '2 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 13, prediction : '2 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 14, prediction : '3 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 15, prediction : '4 - 1', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 16, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 16, prediction : '1 - 0', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 16, prediction : 'отсутствует', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 16, prediction : '1 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 17, prediction : '2 - 1', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 17, prediction : '0 - 2', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 17, prediction : '1 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 19, prediction : '0 - 3', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 20, prediction : '3 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 21, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 23, prediction : '1 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '2'},
+				{ y : 23, prediction : '1 - 0', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Дмитрий Шевченко <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : '1 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 0, prediction : '1 - 1', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '0'},
+				{ y : 0, prediction : '0 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '2 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '2'},
+				{ y : 3, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '3 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 0', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 6, prediction : '2 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '3'},
+				{ y : 6, prediction : '1 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 6, prediction : '2 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 6, prediction : '3 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '2 - 1', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '2'},
+				{ y : 9, prediction : '2 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 10, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 13, prediction : '1 - 2', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '3'},
+				{ y : 13, prediction : '2 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 13, prediction : '1 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 14, prediction : '4 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 15, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 16, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 16, prediction : '1 - 2', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 16, prediction : '1 - 2', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 16, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 17, prediction : '3 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 17, prediction : '1 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 17, prediction : '1 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 21, prediction : '1 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '3'},
+				{ y : 22, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 23, prediction : '3 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 23, prediction : '0 - 2', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 24, prediction : '0 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 24, prediction : '1 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 24, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 24, prediction : '3 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 24, prediction : '0 - 3', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 25, prediction : '1 - 2', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '1'},
+				{ y : 27, prediction : '2 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '2'},
+				{ y : 30, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 32, prediction : '0 - 1', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 32, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 32, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 33, prediction : '0 - 3', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 35, prediction : '1 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '2'},
+				{ y : 35, prediction : '2 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '2 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '1 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 35, prediction : '2 - 2', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '2 - 2', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 35, prediction : '2 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 37, prediction : '2 - 2', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '2'},
+				{ y : 39, prediction : '2 - 2', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '2'},
+				{ y : 40, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 41, prediction : '2 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 42, prediction : '3 - 0', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '1'},
+				{ y : 42, prediction : '0 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 42, prediction : '2 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 42, prediction : '2 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 42, prediction : '2 - 2', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 45, prediction : '1 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '3'},
+				{ y : 46, prediction : '2 - 0', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 46, prediction : '0 - 2', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 46, prediction : '1 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 46, prediction : '1 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Михаил Романовский <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '3 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 3, prediction : '1 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '2'},
+				{ y : 3, prediction : '2 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 5, prediction : '1 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '2'},
+				{ y : 6, prediction : '3 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 6, prediction : '2 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '1 - 2', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '2'},
+				{ y : 9, prediction : '2 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 9, prediction : '2 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 9, prediction : '2 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 9, prediction : '2 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 12, prediction : '1 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '3'},
+				{ y : 13, prediction : '1 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 14, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 14, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 14, prediction : '1 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 16, prediction : '2 - 0', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '2'},
+				{ y : 17, prediction : '3 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 18, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 19, prediction : '1 - 4', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 22, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 23, prediction : '2 - 0', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 23, prediction : '1 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 24, prediction : '3 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 24, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 27, prediction : '1 - 2', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '3'},
+				{ y : 28, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 29, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 30, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 31, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 33, prediction : '1 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '2'},
+				{ y : 33, prediction : '2 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 33, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 33, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 33, prediction : '3 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 33, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 33, prediction : '2 - 0', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 36, prediction : '0 - 0', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '3'},
+				{ y : 39, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 39, prediction : '0 - 0', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 39, prediction : '1 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 39, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 42, prediction : '0 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '3'},
+				{ y : 42, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 46, prediction : '1 - 2', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '2'},
+				{ y : 49, prediction : '1 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '3'},
+				{ y : 49, prediction : '2 - 2', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 51, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 51, prediction : '1 - 1', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 51, prediction : '2 - 0', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 51, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 52, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 54, prediction : '1 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '2'},
+				{ y : 56, prediction : '2 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '2'},
+				{ y : 56, prediction : '1 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 57, prediction : '0 - 1', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 57, prediction : '1 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 57, prediction : '1 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 57, prediction : '0 - 2', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 57, prediction : '2 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 57, prediction : '0 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 59, prediction : '3 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '2'},
+				{ y : 59, prediction : '1 - 2', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Вадим Бобков ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '0 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 3, prediction : '3 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '1 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 0', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '1 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 3, prediction : '1 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '2 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 3, prediction : '3 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 6, prediction : '1 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '3'},
+				{ y : 7, prediction : '2 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 7, prediction : '1 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 7, prediction : '1 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 10, prediction : '1 - 2', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '3'},
+				{ y : 11, prediction : '2 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 13, prediction : '2 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '2'},
+				{ y : 14, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 17, prediction : '0 - 1', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '3'},
+				{ y : 20, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 22, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 22, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 23, prediction : '1 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 23, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : '0 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 24, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 26, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 28, prediction : '1 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '2'},
+				{ y : 29, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 29, prediction : '1 - 2', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 30, prediction : '1 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 30, prediction : '0 - 1', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 30, prediction : '1 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 30, prediction : '1 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 30, prediction : '0 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 30, prediction : '1 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 30, prediction : '0 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 33, prediction : '1 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '3'},
+				{ y : 34, prediction : '0 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 34, prediction : '1 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 34, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 34, prediction : '2 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 34, prediction : '1 - 2', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 36, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 38, prediction : '1 - 2', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '2'},
+				{ y : 41, prediction : '1 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '3'},
+				{ y : 44, prediction : '0 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 46, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 48, prediction : '1 - 0', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '2'},
+				{ y : 48, prediction : '1 - 0', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 48, prediction : '2 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 49, prediction : '1 - 0', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 51, prediction : '2 - 1', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '2'},
+				{ y : 51, prediction : '1 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 51, prediction : '1 - 0', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 52, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 52, prediction : '2 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 52, prediction : '1 - 0', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 52, prediction : '0 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 52, prediction : '0 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 52, prediction : '1 - 0', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 53, prediction : '2 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 54, prediction : '1 - 0', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '1'},
+				]
+			},
+			{
+				name: 'Максим Скляров ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '2 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 3, prediction : '3 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '3 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 4, prediction : '0 - 2', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 5, prediction : '2 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 7, prediction : '1 - 2', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 7, prediction : '3 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 7, prediction : '1 - 1', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 10, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 12, prediction : '0 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 12, prediction : '2 - 1', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 12, prediction : '2 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 12, prediction : '1 - 2', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 13, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 14, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 15, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 15, prediction : '2 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 17, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 18, prediction : '1 - 2', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 21, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 21, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 21, prediction : '2 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 22, prediction : '1 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 24, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 27, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 28, prediction : '1 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 28, prediction : '0 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '1 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 29, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 30, prediction : '2 - 1', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '1'},
+				{ y : 30, prediction : '2 - 1', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 30, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 30, prediction : '2 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 30, prediction : '2 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 30, prediction : '1 - 1', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '0'},
+				{ y : 30, prediction : '2 - 1', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 30, prediction : '1 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 30, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 32, prediction : '1 - 3', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '2'},
+				{ y : 32, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 32, prediction : '1 - 1', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 32, prediction : '2 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '1 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '3'},
+				{ y : 36, prediction : '0 - 2', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 36, prediction : '1 - 2', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 36, prediction : '1 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 36, prediction : '2 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 36, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 36, prediction : '1 - 2', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 38, prediction : '1 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '2'},
+				{ y : 38, prediction : '1 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 38, prediction : '2 - 1', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 38, prediction : '2 - 1', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 38, prediction : '2 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 38, prediction : 'отсутствует', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 38, prediction : '1 - 2', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 38, prediction : '1 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 41, prediction : '1 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '3'},
+				{ y : 41, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 41, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Aleksey Syromyatin <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : '1 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 1, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 1, prediction : '1 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : '2 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 2, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 5, prediction : '1 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 5, prediction : 'отсутствует', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 8, prediction : '2 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '3'},
+				{ y : 8, prediction : '2 - 0', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 8, prediction : '2 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 8, prediction : '3 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '1 - 1', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 9, prediction : '2 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 10, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 10, prediction : '3 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 13, prediction : '1 - 2', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '3'},
+				{ y : 14, prediction : '2 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 15, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 17, prediction : '2 - 1', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '2'},
+				{ y : 18, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 18, prediction : '2 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 18, prediction : '1 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 19, prediction : '0 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 22, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 22, prediction : '0 - 2', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 24, prediction : '0 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '2'},
+				{ y : 24, prediction : 'отсутствует', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '0'},
+				{ y : 27, prediction : '1 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '3'},
+				{ y : 28, prediction : '3 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 29, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 29, prediction : '3 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '2 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 29, prediction : '0 - 3', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 29, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 29, prediction : '2 - 1', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '0 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 29, prediction : '2 - 0', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 31, prediction : '1 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '2'},
+				{ y : 31, prediction : '1 - 1', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '0'},
+				{ y : 34, prediction : '1 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 34, prediction : '2 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 34, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 35, prediction : '0 - 3', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 35, prediction : '2 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 35, prediction : '1 - 1', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '2 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '2 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 37, prediction : '1 - 2', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 39, prediction : '2 - 1', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 39, prediction : '0 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 42, prediction : '1 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '3'},
+				{ y : 42, prediction : '2 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 42, prediction : '1 - 2', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 42, prediction : '1 - 1', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '0'},
+				{ y : 43, prediction : '2 - 0', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '1'},
+				{ y : 43, prediction : '1 - 3', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 46, prediction : '0 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 46, prediction : '1 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 46, prediction : '2 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 46, prediction : '1 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 46, prediction : '0 - 2', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 46, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 46, prediction : '1 - 2', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Константин Аладышев <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '1 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '0 - 0', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '2'},
+				{ y : 5, prediction : '2 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 5, prediction : '3 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '0 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '3'},
+				{ y : 9, prediction : '1 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 12, prediction : '0 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 12, prediction : '2 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 12, prediction : '2 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 15, prediction : '1 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '3'},
+				{ y : 16, prediction : '2 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 18, prediction : '0 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 18, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '1 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '0 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 19, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 20, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 21, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 21, prediction : '0 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 24, prediction : '1 - 0', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '3'},
+				{ y : 24, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 27, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 27, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 27, prediction : '1 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 28, prediction : '1 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 30, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 32, prediction : '1 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '2'},
+				{ y : 33, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 33, prediction : '0 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 34, prediction : '1 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 34, prediction : '0 - 1', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 34, prediction : '0 - 0', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 34, prediction : '2 - 1', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 34, prediction : '0 - 1', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 35, prediction : '0 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '1'},
+				{ y : 35, prediction : '0 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 36, prediction : '0 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 38, prediction : '0 - 1', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 38, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 38, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 39, prediction : '0 - 1', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 39, prediction : '1 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 41, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 41, prediction : '1 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 42, prediction : '0 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '1'},
+				{ y : 45, prediction : '0 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 47, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 49, prediction : '1 - 0', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '2'},
+				{ y : 49, prediction : '2 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 49, prediction : '1 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 50, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 51, prediction : '2 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 51, prediction : '0 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 51, prediction : '2 - 1', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 51, prediction : '1 - 1', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '0'},
+				{ y : 54, prediction : '1 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 55, prediction : '0 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 55, prediction : '0 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 55, prediction : '1 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 58, prediction : '1 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '3'},
+				{ y : 59, prediction : '2 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 60, prediction : '1 - 0', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '1'},
+				]
+			},
+			{
+				name: 'Captain Deadpool <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '1 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '0 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '1 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '2'},
+				{ y : 7, prediction : '2 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '3'},
+				{ y : 7, prediction : '2 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 7, prediction : '2 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 8, prediction : '1 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 11, prediction : '0 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 11, prediction : '2 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 11, prediction : '2 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 11, prediction : '0 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 14, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 16, prediction : '0 - 1', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 16, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 16, prediction : '1 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 17, prediction : '1 - 0', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 17, prediction : '1 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '0'},
+				{ y : 18, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 19, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 22, prediction : '1 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '3'},
+				{ y : 23, prediction : '2 - 0', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 23, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 24, prediction : '1 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 24, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 24, prediction : '1 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 25, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 26, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 26, prediction : '1 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '0'},
+				{ y : 27, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 27, prediction : '0 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 28, prediction : '1 - 2', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 28, prediction : '0 - 1', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 28, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 28, prediction : '3 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 28, prediction : '0 - 1', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 28, prediction : '2 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 28, prediction : '1 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 29, prediction : '1 - 3', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 30, prediction : '0 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 30, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 30, prediction : '0 - 1', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 31, prediction : '1 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 33, prediction : '1 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '2'},
+				{ y : 34, prediction : '1 - 3', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 34, prediction : '2 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 35, prediction : '0 - 2', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '1'},
+				{ y : 36, prediction : '2 - 4', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 38, prediction : '2 - 1', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 38, prediction : '0 - 0', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 38, prediction : 'отсутствует', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 38, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 38, prediction : '1 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 39, prediction : '3 - 1', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 39, prediction : '1 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 39, prediction : '1 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 40, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 40, prediction : '2 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 41, prediction : '0 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 41, prediction : '1 - 0', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 43, prediction : '2 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '2'},
+				{ y : 43, prediction : '1 - 0', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 44, prediction : '2 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 46, prediction : '3 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '2'},
+				]
+			},
+			{
+				name: 'Лео Баум <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 0, prediction : '1 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '0'},
+				{ y : 2, prediction : '1 - 2', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '2'},
+				{ y : 2, prediction : '0 - 0', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '2 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 3, prediction : '4 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '2 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 4, prediction : '0 - 3', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 4, prediction : '1 - 2', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 7, prediction : '0 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 7, prediction : '1 - 0', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 7, prediction : '3 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 8, prediction : '2 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '1'},
+				{ y : 11, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 12, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 12, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 15, prediction : '1 - 2', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '3'},
+				{ y : 15, prediction : '1 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 16, prediction : '3 - 1', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 17, prediction : '4 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 18, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 18, prediction : '1 - 0', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 19, prediction : '3 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 19, prediction : '2 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 20, prediction : '3 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 20, prediction : '0 - 2', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 23, prediction : '1 - 2', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '3'},
+				{ y : 25, prediction : '3 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '2'},
+				{ y : 26, prediction : '0 - 2', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 29, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 30, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 30, prediction : '1 - 2', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 30, prediction : '2 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 30, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 30, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 30, prediction : '1 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 30, prediction : '0 - 1', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 30, prediction : '0 - 0', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 30, prediction : '2 - 3', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 31, prediction : '0 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 31, prediction : '1 - 0', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 31, prediction : '2 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 31, prediction : '0 - 2', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 31, prediction : '1 - 1', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 31, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 31, prediction : '1 - 1', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 31, prediction : '2 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 31, prediction : '0 - 0', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 33, prediction : '2 - 3', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 34, prediction : '2 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '1'},
+				{ y : 34, prediction : '1 - 2', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 34, prediction : '3 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 37, prediction : '1 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '3'},
+				{ y : 37, prediction : '0 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 38, prediction : '3 - 1', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 39, prediction : '2 - 0', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '1'},
+				{ y : 39, prediction : '0 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 40, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 40, prediction : '3 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 40, prediction : '1 - 3', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 40, prediction : 'отсутствует', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Тимур Исмагилов ',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 1, prediction : 'отсутствует', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '0'},
+				{ y : 1, prediction : 'отсутствует', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '0'},
+				{ y : 2, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 4, prediction : '0 - 1', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '2'},
+				{ y : 4, prediction : '2 - 1', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 7, prediction : '3 - 1', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '3'},
+				{ y : 8, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 10, prediction : '2 - 1', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '2'},
+				{ y : 12, prediction : '1 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '2'},
+				{ y : 12, prediction : '2 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 14, prediction : '2 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '2'},
+				{ y : 14, prediction : '2 - 0', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 17, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 17, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 17, prediction : '1 - 0', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '0'},
+				{ y : 18, prediction : '1 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 20, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 21, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 22, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 22, prediction : '1 - 0', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 22, prediction : '1 - 0', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 24, prediction : '1 - 0', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '2'},
+				{ y : 24, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 24, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 24, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 25, prediction : '0 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '1'},
+				{ y : 25, prediction : '1 - 2', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 26, prediction : '0 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 28, prediction : '0 - 1', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '2'},
+				{ y : 28, prediction : '1 - 0', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 28, prediction : '0 - 1', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 29, prediction : '0 - 1', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 29, prediction : '1 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 32, prediction : '0 - 1', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 32, prediction : '1 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 34, prediction : '0 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '2'},
+				{ y : 37, prediction : '0 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 37, prediction : 'отсутствует', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '0'},
+				{ y : 37, prediction : 'отсутствует', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 37, prediction : '1 - 2', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 40, prediction : '1 - 1', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '3'},
+				{ y : 40, prediction : '1 - 2', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '0'},
+				{ y : 42, prediction : '2 - 1', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '2'},
+				{ y : 45, prediction : '1 - 0', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '3'},
+				{ y : 45, prediction : '0 - 1', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 48, prediction : '0 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '3'},
+				{ y : 51, prediction : '1 - 2', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 52, prediction : '0 - 1', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 52, prediction : '2 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 52, prediction : '0 - 1', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 52, prediction : '2 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 52, prediction : 'отсутствует', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 53, prediction : '2 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '1'},
+				]
+			},
+			{
+				name: 'Михаил Гильмендинов <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 0', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '1 - 3', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '1 - 2', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 3, prediction : '3 - 0', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '3 - 1', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 3, prediction : '2 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 6, prediction : '2 - 0', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '3'},
+				{ y : 9, prediction : '0 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '3'},
+				{ y : 9, prediction : '4 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 9, prediction : '3 - 0', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 10, prediction : '2 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '1'},
+				{ y : 13, prediction : '3 - 0', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '3'},
+				{ y : 14, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 14, prediction : '3 - 1', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 17, prediction : '1 - 2', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '3'},
+				{ y : 17, prediction : '1 - 2', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '0'},
+				{ y : 18, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 19, prediction : '3 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 20, prediction : '0 - 3', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 20, prediction : '2 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 21, prediction : '3 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '1'},
+				{ y : 22, prediction : '0 - 1', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 24, prediction : '3 - 1', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '2'},
+				{ y : 24, prediction : '0 - 1', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 26, prediction : '0 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '2'},
+				{ y : 27, prediction : '2 - 0', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 29, prediction : '0 - 1', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '2'},
+				{ y : 30, prediction : '2 - 0', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '1'},
+				{ y : 31, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 31, prediction : '0 - 1', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 31, prediction : '2 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 31, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 31, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 31, prediction : '2 - 0', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 31, prediction : '0 - 1', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 32, prediction : '1 - 2', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '1'},
+				{ y : 32, prediction : '0 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 33, prediction : '1 - 3', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 34, prediction : '0 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 34, prediction : '1 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 34, prediction : '0 - 3', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 37, prediction : '0 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '3'},
+				{ y : 37, prediction : '2 - 1', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 39, prediction : '1 - 2', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '2'},
+				{ y : 39, prediction : '1 - 1', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 40, prediction : '1 - 3', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '1'},
+				{ y : 40, prediction : '1 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 42, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 42, prediction : '1 - 1', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 42, prediction : '3 - 0', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 42, prediction : '2 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 43, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 44, prediction : '3 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 44, prediction : '1 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '0'},
+				{ y : 44, prediction : '1 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 45, prediction : '0 - 1', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 45, prediction : '2 - 0', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 46, prediction : '1 - 2', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 49, prediction : '1 - 1', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '3'},
+				{ y : 49, prediction : '2 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 52, prediction : '1 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '3'},
+				{ y : 54, prediction : '3 - 1', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '2'},
+				{ y : 54, prediction : '1 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+			{
+				name: 'Dmitry Kazakov <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				data: [
+				{y : 0, prediction : 'firstPoint'},
+				{ y : 1, prediction : '2 - 1', match:  'Россия - Саудовская Аравия', match_score: '5 - 0', earned_points: '1'},
+				{ y : 2, prediction : '1 - 3', match:  'Египет - Уругвай', match_score: '0 - 1', earned_points: '1'},
+				{ y : 2, prediction : '1 - 1', match:  'Марокко - Иран', match_score: '0 - 1', earned_points: '0'},
+				{ y : 2, prediction : '0 - 1', match:  'Португалия - Испания', match_score: '3 - 3', earned_points: '0'},
+				{ y : 3, prediction : '3 - 1', match:  'Франция - Австралия', match_score: '2 - 1', earned_points: '1'},
+				{ y : 3, prediction : '2 - 0', match:  'Аргентина - Исландия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 3, prediction : '2 - 1', match:  'Перу - Дания', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '2 - 1', match:  'Хорватия - Нигерия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 4, prediction : '2 - 1', match:  'Коста-Рика - Сербия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '1 - 1', match:  'Германия - Мексика', match_score: '0 - 1', earned_points: '0'},
+				{ y : 4, prediction : '3 - 1', match:  'Бразилия - Швейцария', match_score: '1 - 1', earned_points: '0'},
+				{ y : 5, prediction : '2 - 0', match:  'Швеция - Республика Корея', match_score: '1 - 0', earned_points: '1'},
+				{ y : 6, prediction : '3 - 1', match:  'Бельгия - Панама', match_score: '3 - 0', earned_points: '1'},
+				{ y : 7, prediction : '0 - 2', match:  'Тунис - Англия', match_score: '1 - 2', earned_points: '1'},
+				{ y : 7, prediction : '2 - 0', match:  'Колумбия - Япония', match_score: '1 - 2', earned_points: '0'},
+				{ y : 7, prediction : '1 - 0', match:  'Польша - Сенегал', match_score: '1 - 2', earned_points: '0'},
+				{ y : 8, prediction : '1 - 0', match:  'Россия - Египет', match_score: '3 - 1', earned_points: '1'},
+				{ y : 9, prediction : '2 - 0', match:  'Португалия - Марокко', match_score: '1 - 0', earned_points: '1'},
+				{ y : 10, prediction : '2 - 0', match:  'Уругвай - Саудовская Аравия', match_score: '1 - 0', earned_points: '1'},
+				{ y : 11, prediction : '0 - 2', match:  'Иран - Испания', match_score: '0 - 1', earned_points: '1'},
+				{ y : 11, prediction : '2 - 1', match:  'Дания - Австралия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 11, prediction : '0 - 1', match:  'Франция - Перу', match_score: '1 - 0', earned_points: '0'},
+				{ y : 11, prediction : '1 - 0', match:  'Аргентина - Хорватия', match_score: '0 - 3', earned_points: '0'},
+				{ y : 14, prediction : '2 - 0', match:  'Бразилия - Коста-Рика', match_score: '2 - 0', earned_points: '3'},
+				{ y : 14, prediction : '1 - 2', match:  'Нигерия - Исландия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 16, prediction : '0 - 1', match:  'Сербия - Швейцария', match_score: '1 - 2', earned_points: '2'},
+				{ y : 17, prediction : '3 - 1', match:  'Бельгия - Тунис', match_score: '5 - 2', earned_points: '1'},
+				{ y : 18, prediction : '1 - 3', match:  'Республика Корея - Мексика', match_score: '1 - 2', earned_points: '1'},
+				{ y : 21, prediction : '2 - 1', match:  'Германия - Швеция', match_score: '2 - 1', earned_points: '3'},
+				{ y : 22, prediction : '2 - 0', match:  'Англия - Панама', match_score: '6 - 1', earned_points: '1'},
+				{ y : 22, prediction : '1 - 2', match:  'Япония - Сенегал', match_score: '2 - 2', earned_points: '0'},
+				{ y : 23, prediction : '0 - 1', match:  'Польша - Колумбия', match_score: '0 - 3', earned_points: '1'},
+				{ y : 23, prediction : '0 - 2', match:  'Саудовская Аравия - Египет', match_score: '2 - 1', earned_points: '0'},
+				{ y : 23, prediction : '1 - 2', match:  'Уругвай - Россия', match_score: '3 - 0', earned_points: '0'},
+				{ y : 23, prediction : '3 - 1', match:  'Испания - Марокко', match_score: '2 - 2', earned_points: '0'},
+				{ y : 23, prediction : '1 - 2', match:  'Иран - Португалия', match_score: '1 - 1', earned_points: '0'},
+				{ y : 23, prediction : '1 - 1', match:  'Австралия - Перу', match_score: '0 - 2', earned_points: '0'},
+				{ y : 23, prediction : '2 - 1', match:  'Дания - Франция', match_score: '0 - 0', earned_points: '0'},
+				{ y : 24, prediction : '0 - 2', match:  'Нигерия - Аргентина', match_score: '1 - 2', earned_points: '1'},
+				{ y : 27, prediction : '1 - 2', match:  'Исландия - Хорватия', match_score: '1 - 2', earned_points: '3'},
+				{ y : 27, prediction : '1 - 1', match:  'Мексика - Швеция', match_score: '0 - 3', earned_points: '0'},
+				{ y : 27, prediction : '0 - 3', match:  'Республика Корея - Германия', match_score: '2 - 0', earned_points: '0'},
+				{ y : 28, prediction : '1 - 2', match:  'Сербия - Бразилия', match_score: '0 - 2', earned_points: '1'},
+				{ y : 28, prediction : '2 - 0', match:  'Швейцария - Коста-Рика', match_score: '2 - 2', earned_points: '0'},
+				{ y : 29, prediction : '1 - 3', match:  'Сенегал - Колумбия', match_score: '0 - 1', earned_points: '1'},
+				{ y : 29, prediction : '1 - 0', match:  'Япония - Польша', match_score: '0 - 1', earned_points: '0'},
+				{ y : 29, prediction : '1 - 1', match:  'Панама - Тунис', match_score: '1 - 2', earned_points: '0'},
+				{ y : 29, prediction : '1 - 1', match:  'Англия - Бельгия', match_score: '0 - 1', earned_points: '0'},
+				{ y : 31, prediction : '1 - 0', match:  'Франция - Аргентина', match_score: '4 - 3', earned_points: '2'},
+				{ y : 31, prediction : '2 - 3', match:  'Уругвай - Португалия', match_score: '2 - 1', earned_points: '0'},
+				{ y : 31, prediction : '3 - 1', match:  'Испания - Россия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '0'},
+				{ y : 31, prediction : '1 - 0', match:  'Хорватия - Дания', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 2', earned_points: '0'},
+				{ y : 32, prediction : '2 - 1', match:  'Бразилия - Мексика', match_score: '2 - 0', earned_points: '1'},
+				{ y : 33, prediction : '2 - 0', match:  'Бельгия - Япония', match_score: '3 - 2', earned_points: '1'},
+				{ y : 35, prediction : '2 - 1', match:  'Швеция - Швейцария', match_score: '1 - 0', earned_points: '2'},
+				{ y : 37, prediction : '2 - 2', match:  'Колумбия - Англия', match_score: '1 - 1, ДВ 1 - 1, пен. 3 - 4', earned_points: '2'},
+				{ y : 38, prediction : '1 - 2', match:  'Уругвай - Франция', match_score: '0 - 2', earned_points: '1'},
+				{ y : 38, prediction : '1 - 1', match:  'Бразилия - Бельгия', match_score: '1 - 2', earned_points: '0'},
+				{ y : 38, prediction : '1 - 0', match:  'Швеция - Англия', match_score: '0 - 2', earned_points: '0'},
+				{ y : 38, prediction : '1 - 3', match:  'Россия - Хорватия', match_score: '1 - 1, ДВ 2 - 2, пен. 3 - 4', earned_points: '0'},
+				{ y : 38, prediction : '1 - 2', match:  'Франция - Бельгия', match_score: '1 - 0', earned_points: '0'},
+				{ y : 38, prediction : '0 - 1', match:  'Хорватия - Англия', match_score: '1 - 1, ДВ 2 - 1', earned_points: '0'},
+				{ y : 39, prediction : '1 - 0', match:  'Бельгия - Англия', match_score: '2 - 0', earned_points: '1'},
+				{ y : 39, prediction : '1 - 1', match:  'Франция - Хорватия', match_score: '4 - 2', earned_points: '0'},
+				]
+			},
+		],
+		responsive: {
+			rules: [{
+				condition: {
+					maxWidth: 500
+				},
+				chartOptions: {
+					legend: {
+						align: 'center',
+						verticalAlign: 'bottom',
+						layout: 'horizontal'
+					}
+				}
+			}]
+		}
+	});
+
+
+	stats_chart = Highcharts.chart('stats_container', {
+		chart: {
+			type: 'column'
+		},
+
+		title: {
+			text: 'Статистика прогнозов'
+		},
+
+		xAxis: {
+			categories: [
+				'Сергей Бирюков <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Max Ershov ',
+				'Никита Петров <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Alexander Agarkov ',
+				'Alexander Frolov ',
+				'Михаил Пашко ',
+				'Николай Хорошилов ',
+				'Женя Строкач ',
+				'Кирилл Курочкин ',
+				'Дмитрий Шевченко <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Михаил Романовский <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Вадим Бобков ',
+				'Максим Скляров ',
+				'Aleksey Syromyatin <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Константин Аладышев <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Captain Deadpool <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Лео Баум <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Тимур Исмагилов ',
+				'Михаил Гильмендинов <img src="{% static "coins.png" %}" class="coin_icon"/>',
+				'Dmitry Kazakov <img src="{% static "coins.png" %}" class="coin_icon"/>',
+			],
+			labels: {
+				useHTML:true,
+			}
+		},
+
+		yAxis: {
+			allowDecimals: false,
+			min: 0,
+			tickInterval: 1,
+			title: {
+				text: 'Количество матчей'
+			},
+		},
+
+		tooltip: {
+			useHTML: true,
+			formatter: function () {
+				if  (this.series.options.stack == 'win') {
+					return '<b>' + this.x + '</b><br/>' +
+						this.series.name + ': ' + this.y + '<br/>' +
+						'Всего угадано матчей: ' + this.point.stackTotal;
+				} else {
+					return '<b>' + this.x + '</b><br/>' +
+						this.series.name + ': ' + this.y + '<br/>' +
+						'Всего не угадано матчей: ' + this.point.stackTotal;
+				}
+			}
+		},
+
+		plotOptions: {
+			column: {
+				stacking: 'normal',
+				dataLabels: {
+					enabled: true,
+					color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+					style: {
+						textShadow: '0 0 3px black'
+					},
+					formatter: function () {
+						if (this.y)
+							return this.y;
+						else
+							return ''
+					}
+				}
+			}
+		},
+
+		series: [
+			{
+				name: 'Угадан только победитель',
+				data: [
+					16,
+					16,
+					18,
+					9,
+					13,
+					3,
+					15,
+					15,
+					11,
+					17,
+					16,
+					15,
+					14,
+					13,
+					20,
+					22,
+					16,
+					11,
+					21,
+					22,
+				],
+				stack: 'win'
+			}, {
+				name: 'Угадан только победитель и разница',
+				data: [
+					1,
+					5,
+					6,
+					7,
+					8,
+					1,
+					3,
+					8,
+					3,
+					7,
+					11,
+					9,
+					6,
+					6,
+					8,
+					6,
+					3,
+					9,
+					6,
+					4,
+				],
+				stack: 'win'
+			}, {
+				name: 'Угадан точный счёт',
+				data: [
+					1,
+					7,
+					3,
+					5,
+					8,
+					0,
+					9,
+					7,
+					2,
+					5,
+					7,
+					7,
+					5,
+					7,
+					8,
+					4,
+					6,
+					8,
+					7,
+					3,
+				],
+				stack: 'win'
+			}, {
+				name: 'Победитель не угадан',
+				data: [
+					21,
+					27,
+					33,
+					23,
+					29,
+					4,
+					34,
+					32,
+					15,
+					35,
+					30,
+					33,
+					36,
+					35,
+					28,
+					31,
+					34,
+					21,
+					30,
+					35,
+				],
+				stack: 'loose'
+			}, {
+				name: 'Ставка не сделана',
+				data: [
+					25,
+					9,
+					4,
+					20,
+					6,
+					56,
+					3,
+					2,
+					33,
+					0,
+					0,
+					0,
+					3,
+					3,
+					0,
+					1,
+					5,
+					15,
+					0,
+					0,
+				],
+				stack: 'loose'
+			},
+		],
+
+		responsive: {
+			rules: [{
+					condition: {
+					maxWidth: 500
+				},
+				chartOptions: {
+					legend: {
+						align: 'center',
+						verticalAlign: 'bottom',
+						layout: 'horizontal'
+					}
+				}
+			}]
+		},
+	});
+});
+</script>
+
+<h1>Результаты</h1>
+
+
+<br/>
+<div id="container" style="height: 600px; margin: 0 auto"></div>
+<br/>
+<br/>
+
+<hr/>
+<h1>Статистика прогнозов</h1>
+
+<br/>
+<br/>
+<div id="stats_container" style="height: 600px; margin: 0 auto"></div>
+<br/>
+<br/>
+
+<hr/>
+<h1>Чемпионат</h1>
+<br/>
+<h2>Групповой этап</h2>
+
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа A</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Uruguay.png" class="flag_icon"> Уругвай</td>
+				<td>3</td>
+				<td>9</td>
+				<td>3</td>
+				<td>0</td>
+				<td>0</td>
+				<td>+5</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Russia.png" class="flag_icon"> Россия</td>
+				<td>3</td>
+				<td>6</td>
+				<td>2</td>
+				<td>0</td>
+				<td>1</td>
+				<td>+4</td>
+				<td>8</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Saudi-Arabia.png" class="flag_icon"> Саудовская Аравия</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-5</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Egypt.png" class="flag_icon"> Египет</td>
+				<td>3</td>
+				<td>0</td>
+				<td>0</td>
+				<td>0</td>
+				<td>3</td>
+				<td>-4</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа B</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Spain.png" class="flag_icon"> Испания</td>
+				<td>3</td>
+				<td>5</td>
+				<td>1</td>
+				<td>2</td>
+				<td>0</td>
+				<td>+1</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Portugal.png" class="flag_icon"> Португалия</td>
+				<td>3</td>
+				<td>5</td>
+				<td>1</td>
+				<td>2</td>
+				<td>0</td>
+				<td>+1</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Iran.png" class="flag_icon"> Иран</td>
+				<td>3</td>
+				<td>4</td>
+				<td>1</td>
+				<td>1</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Morocco.png" class="flag_icon"> Марокко</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>1</td>
+				<td>2</td>
+				<td>-2</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа C</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/France.png" class="flag_icon"> Франция</td>
+				<td>3</td>
+				<td>7</td>
+				<td>2</td>
+				<td>1</td>
+				<td>0</td>
+				<td>+2</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Denmark.png" class="flag_icon"> Дания</td>
+				<td>3</td>
+				<td>5</td>
+				<td>1</td>
+				<td>2</td>
+				<td>0</td>
+				<td>+1</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Peru.png" class="flag_icon"> Перу</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>0</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Australia.png" class="flag_icon"> Австралия</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>1</td>
+				<td>2</td>
+				<td>-3</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа D</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Croatia.png" class="flag_icon"> Хорватия</td>
+				<td>3</td>
+				<td>9</td>
+				<td>3</td>
+				<td>0</td>
+				<td>0</td>
+				<td>+6</td>
+				<td>7</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Argentina.png" class="flag_icon"> Аргентина</td>
+				<td>3</td>
+				<td>4</td>
+				<td>1</td>
+				<td>1</td>
+				<td>1</td>
+				<td>-2</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Nigeria.png" class="flag_icon"> Нигерия</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-1</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Iceland.png" class="flag_icon"> Исландия</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>1</td>
+				<td>2</td>
+				<td>-3</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа E</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Brazil.png" class="flag_icon"> Бразилия</td>
+				<td>3</td>
+				<td>7</td>
+				<td>2</td>
+				<td>1</td>
+				<td>0</td>
+				<td>+4</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Switzerland.png" class="flag_icon"> Швейцария</td>
+				<td>3</td>
+				<td>5</td>
+				<td>1</td>
+				<td>2</td>
+				<td>0</td>
+				<td>+1</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Serbia.png" class="flag_icon"> Сербия</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-2</td>
+				<td>2</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Costa-Rica.png" class="flag_icon"> Коста-Рика</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>1</td>
+				<td>2</td>
+				<td>-3</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа F</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Sweden.png" class="flag_icon"> Швеция</td>
+				<td>3</td>
+				<td>6</td>
+				<td>2</td>
+				<td>0</td>
+				<td>1</td>
+				<td>+3</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Mexico.png" class="flag_icon"> Мексика</td>
+				<td>3</td>
+				<td>6</td>
+				<td>2</td>
+				<td>0</td>
+				<td>1</td>
+				<td>-1</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/South-Korea.png" class="flag_icon"> Республика Корея</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>0</td>
+				<td>3</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Germany.png" class="flag_icon"> Германия</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-2</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа G</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Belgium.png" class="flag_icon"> Бельгия</td>
+				<td>3</td>
+				<td>9</td>
+				<td>3</td>
+				<td>0</td>
+				<td>0</td>
+				<td>+7</td>
+				<td>9</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/England.png" class="flag_icon"> Англия</td>
+				<td>3</td>
+				<td>6</td>
+				<td>2</td>
+				<td>0</td>
+				<td>1</td>
+				<td>+5</td>
+				<td>8</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Tunisia.png" class="flag_icon"> Тунис</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-3</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Panama.png" class="flag_icon"> Панама</td>
+				<td>3</td>
+				<td>0</td>
+				<td>0</td>
+				<td>0</td>
+				<td>3</td>
+				<td>-9</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-bordered table-hover">
+		<caption>Группа H</caption>
+		<thead>
+			<tr>
+				<th>Место</th>
+				<th class="col_command">Команда</th>
+				<th>Матчей сыграно</th>
+				<th>Очки</th>
+				<th>Победы</th>
+				<th>Ничьи</th>
+				<th>Поражения</th>
+				<th>Разница мячей</th>
+				<th>Забитые голы</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td><img src="/media/Colombia.png" class="flag_icon"> Колумбия</td>
+				<td>3</td>
+				<td>6</td>
+				<td>2</td>
+				<td>0</td>
+				<td>1</td>
+				<td>+3</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="/media/Senegal.png" class="flag_icon"> Сенегал</td>
+				<td>3</td>
+				<td>4</td>
+				<td>1</td>
+				<td>1</td>
+				<td>1</td>
+				<td>0</td>
+				<td>4</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="/media/Japan.png" class="flag_icon"> Япония</td>
+				<td>3</td>
+				<td>4</td>
+				<td>1</td>
+				<td>1</td>
+				<td>1</td>
+				<td>0</td>
+				<td>4</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="/media/Poland.png" class="flag_icon"> Польша</td>
+				<td>3</td>
+				<td>3</td>
+				<td>1</td>
+				<td>0</td>
+				<td>2</td>
+				<td>-3</td>
+				<td>2</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+</div>
+
+<br>
+
+{% endblock %}

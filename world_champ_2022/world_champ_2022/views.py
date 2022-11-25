@@ -12,3 +12,6 @@ def start_page(request):
 
 def euro2020(request):
     return render(request, 'euro2020.html')
+
+def world2018(request):
+    return render(request, 'world2018.html')
