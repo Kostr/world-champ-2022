@@ -140,6 +140,8 @@ $(document).ready(function () {
 						e.target.elements.result1.value + ' : ' + e.target.elements.result2.value +
 						'</strong>'
 					);
+					if (initialText == "Добавить")
+						initialText = "Изменить"
 					e.target.elements.action_{{mig.match.id}}.value = initialText;
 					e.target.elements.result1.disabled = false
 					e.target.elements.result2.disabled = false
