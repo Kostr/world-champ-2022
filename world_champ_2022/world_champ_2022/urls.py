@@ -24,6 +24,7 @@ urlpatterns = [
     re_path(r'^', include('gambling.urls', namespace='gambling')),
     re_path(r'^logout/$', views.logout_page),
     re_path(r'^$', views.start_page, name='home'),
+    re_path(r'^euro2020/$', views.euro2020, name='euro2020'),
     re_path(r'^accounts/', include('allauth.urls')),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^', include('django.contrib.auth.urls')),

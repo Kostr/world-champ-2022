@@ -9,3 +9,6 @@ def logout_page(request):
 
 def start_page(request):
     return render(request, 'home.html')
+
+def euro2020(request):
+    return render(request, 'euro2020.html')
