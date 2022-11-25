@@ -18,3 +18,6 @@ def world2018(request):
 
 def euro2016(request):
     return render(request, 'euro2016.html')
+
+def world2014(request):
+    return render(request, 'world2014.html')
