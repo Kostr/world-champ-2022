@@ -32,7 +32,7 @@
 			<a href="https://world-champ-2014.appspot.com/" class="text-decoration-none"><h3 style="text-align:center">Чемпионат мира 2014</h3> <br/> <img src="{% static 'WC-2014-Brasil.svg' %}" class="img-responsive img-rounded img_height" style="width:85%;" alt="cup_logo"></a>
 		</div>
 		<div class="col-12 col-sm-6 col-md-3">
-			<a href="https://euro-champ-2016.herokuapp.com/results/" class="text-decoration-none"><h3 style="text-align:center">Чемпионат Европы 2016</h3>  <br/> <img src="{% static 'Logo_UEFA_Euro_2016.png' %}" class="img-responsive img-rounded img_height" style="width:75%;" alt="cup_logo"> </a>
+			<a href="{% url 'euro2016' %}" class="text-decoration-none"><h3 style="text-align:center">Чемпионат Европы 2016</h3>  <br/> <img src="{% static 'Logo_UEFA_Euro_2016.png' %}" class="img-responsive img-rounded img_height" style="width:75%;" alt="cup_logo"> </a>
 		</div>
 		<div class="col-12 col-sm-6 col-md-3">
 			<a href="{% url 'world2018' %}" class="text-decoration-none"><h3 style="text-align:center">Чемпионат мира 2018</h3>  <br/> <img src="{% static '928px-2018_FIFA_World_Cup.svg_.png' %}" class="img-responsive img-rounded img_height" style="width:100%;" alt="cup_logo"> </a>
