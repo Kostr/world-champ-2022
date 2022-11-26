@@ -2403,7 +2403,8 @@ var SPACE_BETWEEN_LONG=yyy*4
 var RECT_X_SIZE = xxx*16;
 var RECT_SCORE_X_SIZE = xxx*3;
 var X_BETWEEN_ROUND_SIZE = xxx*7;
-
+var FLAG_WIDTH = xxx * 2.5
+var FLAG_HEIGHT = RECT_Y_SIZE/2
 
 space=0
 
@@ -2517,8 +2518,15 @@ function drawRound(round_data, round_number) {
 		  .attr("stroke-width", "3")
 		  .attr("class", function(d, i) { return d.class})
 
-	command.append("text")
+	command.append('image')
+		  .attr('xlink:href', function(d) { return '/media/' + d.class + '.png'; })
 		  .attr("x", x(1))
+		  .attr("y", y(RECT_Y_SIZE/4))
+		  .attr('height', y(FLAG_HEIGHT))
+		  .attr('width', y(FLAG_WIDTH))
+
+	command.append("text")
+		  .attr("x", x(FLAG_WIDTH+1))
 		  .attr("y", y(RECT_Y_SIZE/2))
 		  .attr("dy", "0.35em")
 		  .style("font-size", "15px")
@@ -2600,7 +2608,7 @@ innerSpace.append("line")
 
 round1_data.forEach( function(e) {
 		$('.' + e.class).on( "mouseenter", function() {
-			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.75" });
+			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.25" });
 			}
 		);
 		$('.' + e.class).on( "mouseleave", function() {

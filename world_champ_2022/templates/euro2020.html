@@ -2935,15 +2935,16 @@ var innerSpace = svg.append("g")
 
 var commands=16;
 var yyy = 100./(16*8+7*4)
-var xxx = 100./(4*16+4*3+3*7)
+var xxx = 100./(4*20+4*4+3*7)
 
 var RECT_Y_SIZE = yyy*8;
 var SPACE_BETWEEN_LONG=yyy*4
 
-var RECT_X_SIZE = xxx*16;
-var RECT_SCORE_X_SIZE = xxx*3;
+var RECT_X_SIZE = xxx*20;
+var RECT_SCORE_X_SIZE = xxx*4;
 var X_BETWEEN_ROUND_SIZE = xxx*7;
-
+var FLAG_WIDTH = xxx * 2.5
+var FLAG_HEIGHT = RECT_Y_SIZE/2
 
 space=0
 
@@ -2960,7 +2961,7 @@ var round1_data = [{'name':'A1 Италия', 'score':'0(2)', 'class': 'Italy'},
 			{'name':'D1 Англия', 'score':'2', 'class': 'England'},
 			{'name':'F2 Германия', 'score':'0', 'class': 'Germany'},
 			{'name':'C1 Нидерланды', 'score':'0', 'class': 'Netherlands'},
-			{'name':'D3 Чехия', 'score':'2', 'class': 'Czech'},
+			{'name':'D3 Чехия', 'score':'2', 'class': 'Czech-Republic'},
 			{'name':'A2 Уэльс', 'score':'0', 'class': 'Wales'},
 			{'name':'B2 Дания', 'score':'4', 'class': 'Denmark'}]
 
@@ -2970,7 +2971,7 @@ var round2_data = [{'name':'Италия', 'score':'2', 'class': 'Italy'},
 			{'name':'Испания (пен.)', 'score':'1(1)', 'class': 'Spain'},
 			{'name':'Украина', 'score':'0', 'class': 'Ukraine'},
 			{'name':'Англия', 'score':'4', 'class': 'England'},
-			{'name':'Чехия', 'score':'1', 'class': 'Czech'},
+			{'name':'Чехия', 'score':'1', 'class': 'Czech-Republic'},
 			{'name':'Дания', 'score':'2', 'class': 'Denmark'}]
 
 var round3_data = [{'name':'Италия (пен.)', 'score':'1(1)', 'class': 'Italy'},
@@ -3057,8 +3058,15 @@ function drawRound(round_data, round_number) {
 		  .attr("stroke-width", "3")
 		  .attr("class", function(d, i) { return d.class})
 
-	command.append("text")
+	command.append('image')
+		  .attr('xlink:href', function(d) { return '/media/' + d.class + '.png'; })
 		  .attr("x", x(1))
+		  .attr("y", y(RECT_Y_SIZE/4))
+		  .attr('height', y(FLAG_HEIGHT))
+		  .attr('width', y(FLAG_WIDTH))
+
+	command.append("text")
+		  .attr("x", x(FLAG_WIDTH+1))
 		  .attr("y", y(RECT_Y_SIZE/2))
 		  .attr("dy", "0.35em")
 		  .style("font-size", "15px")
@@ -3140,7 +3148,7 @@ innerSpace.append("line")
 
 round1_data.forEach( function(e) {
 		$('.' + e.class).on( "mouseenter", function() {
-			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.75" });
+			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.25" });
 			}
 		);
 		$('.' + e.class).on( "mouseleave", function() {
