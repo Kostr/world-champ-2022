@@ -2,6 +2,10 @@
 {% load static %}
 {% block title %}Тотализатор по чемпионату мира по футболу 2014{% endblock %}
 
+{% block extra_head %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'world2014.ico' %}">
+{% endblock %}
+
 {% block navbar %} {% include "includes/navbar.html" with active_tab='results' %} {% endblock %}
 
 {% block h1 %}<h1>Тотализатор по чемпионату мира по футболу 2014</h1>{% endblock %}
