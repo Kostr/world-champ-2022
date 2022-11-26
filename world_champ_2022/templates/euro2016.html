@@ -2,6 +2,30 @@
 {% load static %}
 {% block title %}Тотализатор по чемпионату Европы по футболу 2016{% endblock %}
 
+{% block extra_head %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'euro2016.ico' %}">
+<style>
+@font-face {
+	font-family: 'PFBeauSansPro-SemiBold';
+	src: url('{% static 'fonts/PFBeauSansPro-SemiBold.ttf' %}') format("truetype"),
+		 local('{% static 'fonts/PFBeauSansPro-SemiBold.ttf' %}');
+}
+
+h1,h2,h3 {
+	font-family: PFBeauSansPro-SemiBold
+}
+
+body {
+	background-image: url('{% static 'euro2016_background.jpg' %}');
+	background-color: #fff;
+	background-repeat: repeat-x;
+	background-position: center 0px;
+	background-attachment: fixed;
+	background-size: cover;
+}
+</style>
+{% endblock %}
+
 {% block navbar %} {% include "includes/navbar.html" with active_tab='results' %} {% endblock %}
 
 {% block h1 %}<h1>Тотализатор по чемпионату Европы по футболу 2016</h1>{% endblock %}
