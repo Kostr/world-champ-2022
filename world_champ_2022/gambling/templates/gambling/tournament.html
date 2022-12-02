@@ -75,76 +75,52 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 
 <script>
-// Select the svg area
 var svg = d3.select("#viz_area").append("svg")
 .attr("preserveAspectRatio", "xMinYMin meet")
 .attr("viewBox", "0 0 1200 800")
-// Create a scale: transform value in pixel
 var x = d3.scaleLinear()
-    .domain([0, 100])         // This is the min and the max of the data: 0 to 100 if percentages
-    .range([0, 1100]);       // This is the corresponding value I want in Pixel
+    .domain([0, 100])
+    .range([0, 1100]);
 
 var y = d3.scaleLinear()
-    .domain([0, 100])         // This is the min and the max of the data: 0 to 100 if percentages
-    .range([0, 700]);       // This is the corresponding value I want in Pixel
-// Try console.log( x(25) ) to see what this x function does.
-
-
-// Add 3 dots for 0, 50 and 100%
-/*
-svg.append('rect')
-  .attr("x", x(0))
-  .attr("y", y(10))
-  .attr("width", x(100))
-  .attr("height", y(80))
-		  .style("stroke", "grey")
-		  .attr("stroke-width", "2")
-*/
+    .domain([0, 100])
+    .range([0, 700]);
 
 var innerSpace = svg.append("g")
     .attr("transform", "translate(" + 50 + "," + 50 + ")")
 	.attr("class", "hhh")
 
-//innerSpace.call(d3.axisBottom(x));
-//innerSpace.append('g').call(d3.axisLeft(y));
-
-
-
-
-
 var commands=16;
-// 16*rect_y+8*space_small+7*space_large = 100
-// 16*8x + 8*1x + 7*3x = 100
-//var yyy = 100./(16*8+8*1+7*4)
 var yyy = 100./(16*8+7*4)
-var xxx = 100./(4*16+4*3+3*7)
+var xxx = 100./(4*21+4*4+3*5)
 
 var RECT_Y_SIZE = yyy*8;
 var SPACE_BETWEEN_LONG=yyy*4
 
-var RECT_X_SIZE = xxx*16;
-var RECT_SCORE_X_SIZE = xxx*3;
-var X_BETWEEN_ROUND_SIZE = xxx*7;
-
+var RECT_X_SIZE = xxx*21;
+var RECT_SCORE_X_SIZE = xxx*4;
+var X_BETWEEN_ROUND_SIZE = xxx*5;
+var FLAG_WIDTH = xxx * 2.5
+var FLAG_HEIGHT = RECT_Y_SIZE/2
 
 space=0
 
-var round1_data = [{'name':'A1', 'score':'', 'class': ''},
-			{'name':'B2', 'score':'', 'class': ''},
-			{'name':'C1', 'score':'', 'class': ''},
-			{'name':'D2', 'score':'', 'class': ''},
-			{'name':'E1', 'score':'', 'class': ''},
-			{'name':'F2', 'score':'', 'class': ''},
-			{'name':'G1', 'score':'', 'class': ''},
-			{'name':'H2', 'score':'', 'class': ''},
-			{'name':'B1', 'score':'', 'class': ''},
-			{'name':'A2', 'score':'', 'class': ''},
-			{'name':'D1', 'score':'', 'class': ''},
-			{'name':'C2', 'score':'', 'class': ''},
-			{'name':'F1', 'score':'', 'class': ''},
-			{'name':'E2', 'score':'', 'class': ''},
-			{'name':'H1', 'score':'', 'class': ''},
-			{'name':'G2', 'score':'', 'class': ''}]
+var round1_data = [{'name':'A1 Нидерланды', 'score':'', 'class': 'Netherlands'},
+			{'name':'B2 США', 'score':'', 'class': 'United-States'},
+			{'name':'C1 Аргентина', 'score':'', 'class': 'Argentina'},
+			{'name':'D2 Австралия', 'score':'', 'class': 'Australia'},
+			{'name':'E1 Япония', 'score':'', 'class': 'Japan'},
+			{'name':'F2 Хорватия', 'score':'', 'class': 'Croatia'},
+			{'name':'G1 Бразилия', 'score':'', 'class': 'Brazil'},
+			{'name':'H2 Республика Корея', 'score':'', 'class': ''},
+			{'name':'B1 Англия', 'score':'', 'class': 'England'},
+			{'name':'A2 Сенегал', 'score':'', 'class': 'Senegal'},
+			{'name':'D1 Франция', 'score':'', 'class': 'France'},
+			{'name':'C2 Польша', 'score':'', 'class': 'Poland'},
+			{'name':'F1 Марокко', 'score':'', 'class': 'Morocco'},
+			{'name':'E2 Испания', 'score':'', 'class': 'Spain'},
+			{'name':'H1 Португалия', 'score':'', 'class': 'Portugal'},
+			{'name':'G2 Швейцария', 'score':'', 'class': 'Switzerland'}]
 
 var round2_data = [{'name':'', 'score':'', 'class': ''},
 			{'name':'', 'score':'', 'class': ''},
@@ -201,10 +177,10 @@ function drawRound(round_data, round_number) {
 	  .enter()
 	  .append("g")
 		.attr("transform", function(d, i) {
-			return "translate(" + x((round_number-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," + 
+			return "translate(" + x((round_number-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," +
 								   y(y_height(i, round_number)) + ")";
 		});
-		
+
 	command.append("path")
 		.attr("d", function (d, i) {
 			if (i%2==0) {
@@ -230,14 +206,6 @@ function drawRound(round_data, round_number) {
 		  .attr("stroke-width", "3")
 		  .style("fill", "white")
 
-//	command.append("rect")
-//		  //.attr("rx", x(1))
-//		  //.attr("ry", y(1))
-//		  .attr("width", x(RECT_X_SIZE+RECT_SCORE_X_SIZE))
-//		  .attr("height", y(RECT_Y_SIZE))
-//		  .style("fill", "white").style("stroke", "black")
-//		  .attr("class", function(d, i) { return d.class})
-
 	command.append("line")
 		  .attr("x1", x(RECT_X_SIZE))
 		  .attr("x2", x(RECT_X_SIZE))
@@ -247,10 +215,17 @@ function drawRound(round_data, round_number) {
 		  .attr("stroke-width", "3")
 		  .attr("class", function(d, i) { return d.class})
 
-	command.append("text")
+	command.append('image')
+		  .attr('xlink:href', function(d) { return '/media/' + d.class + '.png'; })
 		  .attr("x", x(1))
+		  .attr("y", y(RECT_Y_SIZE/4))
+		  .attr('height', y(FLAG_HEIGHT))
+		  .attr('width', y(FLAG_WIDTH))
+
+	command.append("text")
+		  .attr("x", x(FLAG_WIDTH+1))
 		  .attr("y", y(RECT_Y_SIZE/2))
-		  .attr("dy", "0.35em")				//vertical alignment
+		  .attr("dy", "0.35em")
 		  .style("font-size", "15px")
 		  .attr("text-anchor", "start")
 		  .style("stroke", "black")
@@ -260,7 +235,7 @@ function drawRound(round_data, round_number) {
 	command.append("text")
 		  .attr("x", x(RECT_X_SIZE + RECT_SCORE_X_SIZE/2))
 		  .attr("y", y(RECT_Y_SIZE / 2))
-		  .attr("dy", "0.35em")			//vertical alignment
+		  .attr("dy", "0.35em")
 		  .style("font-size", "15px")
 		  .attr("text-anchor", "middle")
 		  .style("stroke", "black")
@@ -271,7 +246,7 @@ function drawRound(round_data, round_number) {
 		command.append("line")
 			  .attr("x1", x(0))
 			  .attr("x2", function(d, i) {
-				if (i%2==0) 
+				if (i%2==0)
 					return -x(X_BETWEEN_ROUND_SIZE/2)
 				else
 					return x(0)
@@ -284,28 +259,10 @@ function drawRound(round_data, round_number) {
 	}
 
 	if (round_number!=4) {
-	/*
-		command.append("path")
-			.attr("d", function (d, i) {
-				if (i%2==0) {
-					if (i==0)
-						return "M " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE) + " " + y(RECT_Y_SIZE) + " " +
-						       "Q " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + "," + y(RECT_Y_SIZE) + " " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + "," + (y(RECT_Y_SIZE) + x(X_BETWEEN_ROUND_SIZE/2)) + " "
-					return "M " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE) + " " + y(RECT_Y_SIZE) + " " +
-					       "H " + x(RECT_X_SIZE + RECT_SCORE_X_SIZE + X_BETWEEN_ROUND_SIZE/2) + " "
-				}
-			})
-			.style("fill", "white")
-			.style("stroke", "grey")
-			.attr("stroke-width", "3");
-	*/
-	
-	
-
 		command.append("line")
 			  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE))
 			  .attr("x2", function(d, i) {
-				if (i%2==0) 
+				if (i%2==0)
 					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)+x(X_BETWEEN_ROUND_SIZE/2)
 				else
 					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)
@@ -348,7 +305,7 @@ innerSpace.append("line")
 
 round1_data.forEach( function(e) {
 		$('.' + e.class).on( "mouseenter", function() {
-			$('.' + e.class).css({ fill: "#00ff00" });
+			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.25" });
 			}
 		);
 		$('.' + e.class).on( "mouseleave", function() {
@@ -357,7 +314,6 @@ round1_data.forEach( function(e) {
 		);
 	}
 )
-//$('.Russia').css({ fill: "#ff0000" });
 </script>
 
 {% endblock %}
