@@ -112,7 +112,7 @@ var round1_data = [{'name':'A1 Нидерланды', 'score':'', 'class': 'Neth
 			{'name':'E1 Япония', 'score':'', 'class': 'Japan'},
 			{'name':'F2 Хорватия', 'score':'', 'class': 'Croatia'},
 			{'name':'G1 Бразилия', 'score':'', 'class': 'Brazil'},
-			{'name':'H2 Республика Корея', 'score':'', 'class': ''},
+			{'name':'H2 Республика Корея', 'score':'', 'class': 'South-Korea'},
 			{'name':'B1 Англия', 'score':'', 'class': 'England'},
 			{'name':'A2 Сенегал', 'score':'', 'class': 'Senegal'},
 			{'name':'D1 Франция', 'score':'', 'class': 'France'},
@@ -216,7 +216,12 @@ function drawRound(round_data, round_number) {
 		  .attr("class", function(d, i) { return d.class})
 
 	command.append('image')
-		  .attr('xlink:href', function(d) { return '/media/' + d.class + '.png'; })
+		  .attr('xlink:href', function(d) {
+				if (d.class)
+					return '/media/' + d.class + '.png';
+				else
+					return null;
+			})
 		  .attr("x", x(1))
 		  .attr("y", y(RECT_Y_SIZE/4))
 		  .attr('height', y(FLAG_HEIGHT))
