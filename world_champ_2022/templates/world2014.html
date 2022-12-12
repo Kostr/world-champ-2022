@@ -445,6 +445,272 @@ $(function () {
 <br/>
 <br/>
 
-<br>
+<h2>Плей-офф</h2>
+<div id="viz_area">
+</div>
+
+<br/>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<script>
+var svg = d3.select("#viz_area").append("svg")
+.attr("preserveAspectRatio", "xMinYMin meet")
+.attr("viewBox", "0 0 1200 800")
+var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([0, 1100]);
+
+var y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([0, 700]);
+
+var innerSpace = svg.append("g")
+    .attr("transform", "translate(" + 50 + "," + 50 + ")")
+	.attr("class", "hhh")
+
+var commands=16;
+var yyy = 100./(16*8+7*4)
+var xxx = 100./(4*21+4*4+3*5)
+
+var RECT_Y_SIZE = yyy*8;
+var SPACE_BETWEEN_LONG=yyy*4
+
+var RECT_X_SIZE = xxx*21;
+var RECT_SCORE_X_SIZE = xxx*4;
+var X_BETWEEN_ROUND_SIZE = xxx*5;
+var FLAG_WIDTH = xxx * 2.5
+var FLAG_HEIGHT = RECT_Y_SIZE/2
+
+space=0
+
+var round1_data = [{'name':'Бразилия (пен.)', 'score':'1(3)', 'class': 'Brazil'},
+			{'name':'Чили', 'score':'1(2)', 'class': 'Chile'},
+			{'name':'Колумбия', 'score':'2', 'class': 'Colombia'},
+			{'name':'Уругвай', 'score':'0', 'class': 'Uruguay'},
+			{'name':'Франция', 'score':'2', 'class': 'France'},
+			{'name':'Нигерия', 'score':'0', 'class': 'Nigeria'},
+			{'name':'Германия (д.в.)', 'score':'2', 'class': 'Germany'},
+			{'name':'Алжир', 'score':'1', 'class': 'Algeria'},
+			{'name':'Нидерланды', 'score':'2', 'class': 'Netherlands'},
+			{'name':'Мексика', 'score':'1', 'class': 'Mexico'},
+			{'name':'Коста-Рика (пен.)', 'score':'1(5)', 'class': 'Costa-Rica'},
+			{'name':'Греция', 'score':'1(3)', 'class': 'Greece'},
+			{'name':'Аргентина (д.в.)', 'score':'1', 'class': 'Argentina'},
+			{'name':'Швейцария', 'score':'0', 'class': 'Switzerland'},
+			{'name':'Бельгия (д.в.)', 'score':'2', 'class': 'Belgium'},
+			{'name':'США', 'score':'1', 'class': 'United-States'}]
+
+var round2_data = [{'name':'Бразилия', 'score':'2', 'class': 'Brazil'},
+			{'name':'Колумбия', 'score':'1', 'class': 'Colombia'},
+			{'name':'Франция', 'score':'0', 'class': 'France'},
+			{'name':'Германия', 'score':'1', 'class': 'Germany'},
+			{'name':'Нидерланды (пен.)', 'score':'0(4)', 'class': 'Netherlands'},
+			{'name':'Коста-Рика', 'score':'0(3)', 'class': 'Costa-Rica'},
+			{'name':'Аргентина', 'score':'1', 'class': 'Argentina'},
+			{'name':'Бельгия', 'score':'0', 'class': 'Belgium'}]
+
+var round3_data = [{'name':'Бразилия', 'score':'1', 'class': 'Brazil'},
+			{'name':'Германия', 'score':'7', 'class': 'Germany'},
+			{'name':'Нидерланды', 'score':'0(2)', 'class': 'Netherlands'},
+			{'name':'Аргентина (пен.)', 'score':'0(4)', 'class': 'Argentina'}]
+
+var round4_data = [{'name':'Германия (д.в.)', 'score':'1', 'class': 'Germany'},
+			{'name':'Аргентина', 'score':'0', 'class': 'Argentina'}]
+
+var round_3rd_place = [{'name':'Бразилия', 'score':'0', 'class': 'Brazil'},
+			{'name':'Нидерланды', 'score':'3', 'class': 'Netherlands'}]
+
+function y_height(n, round_number) {
+	var space = 0;
+
+	var height = 0;
+	if (round_number==2)
+		height = 2*RECT_Y_SIZE+  SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==3)
+		height = 4*RECT_Y_SIZE+2*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==4)
+		height = 8*RECT_Y_SIZE+4*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==4.5)
+		height = 14*RECT_Y_SIZE+5*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+
+	var space_long = SPACE_BETWEEN_LONG
+	if (round_number==2)
+		space_long = RECT_Y_SIZE*4 +SPACE_BETWEEN_LONG*2 - 2*(RECT_Y_SIZE)
+	if (round_number==3)
+		space_long = RECT_Y_SIZE*8 +SPACE_BETWEEN_LONG*4 - 2*(RECT_Y_SIZE)
+	if (round_number==4)
+		space_long = RECT_Y_SIZE*16+SPACE_BETWEEN_LONG*8 - 2*(RECT_Y_SIZE)
+	if (round_number==4.5)
+		height = 14*RECT_Y_SIZE+5*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+
+	for (var i=0; i<n; i++) {
+		height+=RECT_Y_SIZE;
+		if (i%2)
+			height += space_long;
+	}
+	return height;
+}
+
+drawRound(round1_data, 1)
+drawRound(round2_data, 2)
+drawRound(round3_data, 3)
+drawRound(round4_data, 4)
+drawRound(round_3rd_place, 4.5)
+
+function drawRound(round_data, round_number) {
+	command=innerSpace.selectAll("whatever")
+	  .data(round_data)
+	  .enter()
+	  .append("g")
+		.attr("transform", function(d, i) {
+			// 'Math.floor' is for the 3rd place round
+			return "translate(" + x((Math.floor(round_number)-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," +
+								   y(y_height(i, round_number)) + ")";
+		});
+
+	command.append("path")
+		.attr("d", function (d, i) {
+			if (i%2==0) {
+				return "M " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE/2) + " " + y(0) + " " +
+		           "Q " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + ", "+ y(0) + " " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + "," + y(RECT_Y_SIZE)/2 + " " +
+				   "V " + y(RECT_Y_SIZE) + " " +
+				   "H " + x(0) + " " +
+				   "V " + y(RECT_Y_SIZE)/2 + " " +
+				   "Q " + x(0) + ", " + y(0) + " " + x(RECT_SCORE_X_SIZE/2) + "," + y(0) + " " +
+				   "z"
+			}
+			else {
+				return  "M " + x(0) + " " +  y(0) + " " +
+				   "H " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + " " +
+		           "V " + y(RECT_Y_SIZE)/2 + " " +
+				   "Q " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE) + "," + y(RECT_Y_SIZE) + " " + x(RECT_X_SIZE+RECT_SCORE_X_SIZE/2) + "," + y(RECT_Y_SIZE) + " " +
+				   "H " + x(RECT_SCORE_X_SIZE/2) + " " +
+				   "Q " + x(0) + "," + y(RECT_Y_SIZE) + " " + x(0) + "," + y(RECT_Y_SIZE)/2 + " " +
+				   "V " + y(0)}
+				})
+		  .attr("class", function(d, i) { return d.class})
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3")
+		  .style("fill", "white")
+
+	command.append("line")
+		  .attr("x1", x(RECT_X_SIZE))
+		  .attr("x2", x(RECT_X_SIZE))
+		  .attr("y1", y(0))
+		  .attr("y2", y(RECT_Y_SIZE))
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3")
+		  .attr("class", function(d, i) { return d.class})
+
+	command.append('image')
+		  .attr('xlink:href', function(d) {
+				if (d.class)
+					return '/media/' + d.class + '.png';
+				else
+					return null;
+			})
+		  .attr("x", x(1))
+		  .attr("y", y(RECT_Y_SIZE/4))
+		  .attr('height', y(FLAG_HEIGHT))
+		  .attr('width', y(FLAG_WIDTH))
+
+	command.append("text")
+		  .attr("x", x(FLAG_WIDTH+1))
+		  .attr("y", y(RECT_Y_SIZE/2))
+		  .attr("dy", "0.35em")
+		  .style("font-size", "15px")
+		  .attr("text-anchor", "start")
+		  .style("stroke", "black")
+		  .text(function(d) { return d.name; })
+		  .attr("class", function(d, i) { return d.class})
+
+	command.append("text")
+		  .attr("x", x(RECT_X_SIZE + RECT_SCORE_X_SIZE/2))
+		  .attr("y", y(RECT_Y_SIZE / 2))
+		  .attr("dy", "0.35em")
+		  .style("font-size", "15px")
+		  .attr("text-anchor", "middle")
+		  .style("stroke", "black")
+		  .text(function(d) { return d.score; })
+		  .attr("class", function(d, i) { return d.class})
+
+	if ((round_number!=1) && (round_number!=4.5)) {
+		command.append("line")
+			  .attr("x1", x(0))
+			  .attr("x2", function(d, i) {
+				if (i%2==0)
+					return -x(X_BETWEEN_ROUND_SIZE/2)
+				else
+					return x(0)
+			})
+			  .attr("y1", y(RECT_Y_SIZE))
+			  .attr("y2", y(RECT_Y_SIZE))
+			  .style("fill", "white")
+			  .style("stroke", "grey")
+			  .attr("stroke-width", "3");
+	}
+
+	if ((round_number!=4) && (round_number!=4.5)) {
+		command.append("line")
+			  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE))
+			  .attr("x2", function(d, i) {
+				if (i%2==0)
+					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)+x(X_BETWEEN_ROUND_SIZE/2)
+				else
+					return x(RECT_X_SIZE + RECT_SCORE_X_SIZE)
+			  })
+			  .attr("y1", y(RECT_Y_SIZE))
+			  .attr("y2", y(RECT_Y_SIZE))
+			  .style("fill", "white")
+			  .style("stroke", "grey")
+			  .attr("stroke-width", "3");
+	}
+}
+
+innerSpace.append("line")
+		  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(RECT_X_SIZE + RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE))
+		  .attr("y2", y(100-RECT_Y_SIZE))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+innerSpace.append("line")
+		  .attr("x1", x(2*RECT_X_SIZE + 2*RECT_SCORE_X_SIZE +X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(2*RECT_X_SIZE + 2*RECT_SCORE_X_SIZE +X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE*2 + SPACE_BETWEEN_LONG/2))
+		  .attr("y2", y(100-(RECT_Y_SIZE*2 + SPACE_BETWEEN_LONG/2)))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+innerSpace.append("line")
+		  .attr("x1", x(3*RECT_X_SIZE + 3*RECT_SCORE_X_SIZE + 2*X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("x2", x(3*RECT_X_SIZE + 3*RECT_SCORE_X_SIZE + 2*X_BETWEEN_ROUND_SIZE+X_BETWEEN_ROUND_SIZE/2))
+		  .attr("y1", y(RECT_Y_SIZE*4 + SPACE_BETWEEN_LONG + SPACE_BETWEEN_LONG/2))
+		  .attr("y2", y(100-(RECT_Y_SIZE*4 + SPACE_BETWEEN_LONG + SPACE_BETWEEN_LONG/2)))
+		  .style("fill", "white")
+		  .style("stroke", "grey")
+		  .attr("stroke-width", "3");
+
+
+round1_data.forEach( function(e) {
+		$('.' + e.class).on( "mouseenter", function() {
+			$('.' + e.class).css({ fill: "RGBA(25, 135, 84, 0.25" });
+			}
+		);
+		$('.' + e.class).on( "mouseleave", function() {
+			$('.' + e.class).css({ fill: "#ffffff" });
+			}
+		);
+	}
+)
+</script>
 
 {% endblock %}
