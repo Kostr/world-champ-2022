@@ -139,6 +139,9 @@ var round3_data = [{'name':'Аргентина', 'score':'', 'class': 'Argentina
 var round4_data = [{'name':'', 'score':'', 'class': ''},
 			{'name':'', 'score':'', 'class': ''}]
 
+var round_3rd_place = [{'name':'', 'score':'', 'class': ''},
+			{'name':'', 'score':'', 'class': ''}]
+
 function y_height(n, round_number) {
 	var space = 0;
 
@@ -149,6 +152,8 @@ function y_height(n, round_number) {
 		height = 4*RECT_Y_SIZE+2*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
 	if (round_number==4)
 		height = 8*RECT_Y_SIZE+4*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
+	if (round_number==4.5)
+		height = 14*RECT_Y_SIZE+5*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
 
 	var space_long = SPACE_BETWEEN_LONG
 	if (round_number==2)
@@ -157,6 +162,8 @@ function y_height(n, round_number) {
 		space_long = RECT_Y_SIZE*8 +SPACE_BETWEEN_LONG*4 - 2*(RECT_Y_SIZE)
 	if (round_number==4)
 		space_long = RECT_Y_SIZE*16+SPACE_BETWEEN_LONG*8 - 2*(RECT_Y_SIZE)
+	if (round_number==4.5)
+		height = 14*RECT_Y_SIZE+5*SPACE_BETWEEN_LONG-(SPACE_BETWEEN_LONG/2+RECT_Y_SIZE)
 
 	for (var i=0; i<n; i++) {
 		height+=RECT_Y_SIZE;
@@ -170,6 +177,7 @@ drawRound(round1_data, 1)
 drawRound(round2_data, 2)
 drawRound(round3_data, 3)
 drawRound(round4_data, 4)
+drawRound(round_3rd_place, 4.5)
 
 function drawRound(round_data, round_number) {
 	command=innerSpace.selectAll("whatever")
@@ -177,7 +185,8 @@ function drawRound(round_data, round_number) {
 	  .enter()
 	  .append("g")
 		.attr("transform", function(d, i) {
-			return "translate(" + x((round_number-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," +
+			// 'Math.floor' is for the 3rd place round
+			return "translate(" + x((Math.floor(round_number)-1)*(RECT_X_SIZE+RECT_SCORE_X_SIZE+X_BETWEEN_ROUND_SIZE)) + "," +
 								   y(y_height(i, round_number)) + ")";
 		});
 
@@ -247,7 +256,7 @@ function drawRound(round_data, round_number) {
 		  .text(function(d) { return d.score; })
 		  .attr("class", function(d, i) { return d.class})
 
-	if (round_number!=1) {
+	if ((round_number!=1) && (round_number!=4.5)) {
 		command.append("line")
 			  .attr("x1", x(0))
 			  .attr("x2", function(d, i) {
@@ -263,7 +272,7 @@ function drawRound(round_data, round_number) {
 			  .attr("stroke-width", "3");
 	}
 
-	if (round_number!=4) {
+	if ((round_number!=4) && (round_number!=4.5)) {
 		command.append("line")
 			  .attr("x1", x(RECT_X_SIZE + RECT_SCORE_X_SIZE))
 			  .attr("x2", function(d, i) {
